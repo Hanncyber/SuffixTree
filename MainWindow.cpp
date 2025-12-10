@@ -262,8 +262,7 @@ void MainWindow::visualizeTree(SuffixTree* tree) {
     SuffixNode* root = tree->getRoot();
     if (!root) return;
     
-    // Calculate tree width for proper spacing
-    int nodeCount = root->children.size();
+    // Set initial drawing parameters
     qreal startX = -200;
     qreal startY = 0;
     qreal horizontalSpacing = 150;
@@ -285,7 +284,7 @@ void MainWindow::drawNode(SuffixNode* node, qreal x, qreal y, qreal horizontalSp
     std::string text = tree->getText();
     
     // Draw current node as a circle
-    QGraphicsEllipseItem* nodeCircle = treeScene->addEllipse(
+    treeScene->addEllipse(
         x - NODE_RADIUS, y - NODE_RADIUS, 
         NODE_RADIUS * 2, NODE_RADIUS * 2,
         QPen(Qt::black, 2),
@@ -322,11 +321,17 @@ void MainWindow::drawNode(SuffixNode* node, qreal x, qreal y, qreal horizontalSp
         
         // Get edge label text
         int start = child->start;
+        if (!child->end) continue; // Skip if end pointer is null
         int end = *(child->end);
+        
+        // Validate bounds before accessing text
+        if (start < 0 || start >= static_cast<int>(text.length())) continue;
+        
         int edgeLength = end - start + 1;
+        int availableLength = text.length() - start;
         
         // Limit edge label length for display
-        std::string edgeLabel = text.substr(start, std::min(edgeLength, 10));
+        std::string edgeLabel = text.substr(start, std::min({edgeLength, 10, availableLength}));
         if (edgeLength > 10) edgeLabel += "...";
         
         // Draw edge label
