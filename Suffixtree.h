@@ -57,6 +57,9 @@ public:
     void printStats(); // Prints complexity metrics (nodes, size, time)
     void printTree();  // Console visualization of the tree structure
 
+    //visualization support for GUI
+    SuffixNode* getRoot() const { return root; }
+    string getText() const { return treeText; }
 
     //extra functions
     string getLongestPalindrome();

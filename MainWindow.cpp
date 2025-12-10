@@ -256,35 +256,106 @@ void MainWindow::visualizeTree(SuffixTree* tree) {
     titleFont.setPointSize(14);
     titleFont.setBold(true);
     title->setFont(titleFont);
-    title->setPos(-100, -50);
+    title->setPos(-200, -80);
     
-    // Note: Since we don't have direct access to the root node from outside the class,
-    // we'll display a message indicating the tree was built
-    // In a real implementation, you'd need to expose the tree structure or add
-    // a method to the SuffixTree class to get visualization data
+    // Get the root node and start drawing
+    SuffixNode* root = tree->getRoot();
+    if (!root) return;
     
-    QGraphicsTextItem* info = treeScene->addText(
-        QString("Tree visualization for text: \"%1\"\n\n"
-                "The suffix tree has been successfully built using Ukkonen's algorithm.\n"
-                "Total nodes and structure are optimized for O(n) construction.\n\n"
-                "Use the search function to find patterns in the tree.\n\n"
-                "Note: Full graphical tree rendering would require exposing\n"
-                "the internal tree structure from the SuffixTree class.")
-        .arg(currentText));
-    info->setPos(-200, 50);
+    // Calculate tree width for proper spacing
+    int nodeCount = root->children.size();
+    qreal startX = -200;
+    qreal startY = 0;
+    qreal horizontalSpacing = 150;
     
-    // Center the view
-    treeView->fitInView(treeScene->sceneRect(), Qt::KeepAspectRatio);
+    // Draw the tree starting from root
+    drawNode(root, startX, startY, horizontalSpacing, 0, tree);
+    
+    // Fit the view to show all content
+    treeView->fitInView(treeScene->sceneRect().adjusted(-50, -50, 50, 50), Qt::KeepAspectRatio);
 }
 
 void MainWindow::drawNode(SuffixNode* node, qreal x, qreal y, qreal horizontalSpacing, 
                           int depth, SuffixTree* tree) {
-    // This method would be used if we had access to the tree structure
-    // For now, it's a placeholder for future enhancement
-    Q_UNUSED(node);
-    Q_UNUSED(x);
-    Q_UNUSED(y);
-    Q_UNUSED(horizontalSpacing);
-    Q_UNUSED(depth);
-    Q_UNUSED(tree);
+    if (!node) return;
+    
+    const qreal NODE_RADIUS = 20;
+    const qreal VERTICAL_SPACING = 80;
+    
+    std::string text = tree->getText();
+    
+    // Draw current node as a circle
+    QGraphicsEllipseItem* nodeCircle = treeScene->addEllipse(
+        x - NODE_RADIUS, y - NODE_RADIUS, 
+        NODE_RADIUS * 2, NODE_RADIUS * 2,
+        QPen(Qt::black, 2),
+        QBrush(node->children.empty() ? Qt::lightGray : Qt::white)
+    );
+    
+    // Add node label (show if it's a leaf with suffix index)
+    if (node->suffixIndex != -1) {
+        QGraphicsTextItem* label = treeScene->addText(QString::number(node->suffixIndex));
+        QFont font = label->font();
+        font.setPointSize(8);
+        label->setFont(font);
+        label->setPos(x - 8, y - 8);
+    }
+    
+    // Calculate positions for children
+    int childCount = node->children.size();
+    if (childCount == 0) return;
+    
+    qreal totalWidth = horizontalSpacing * (childCount - 1);
+    qreal childStartX = x - totalWidth / 2;
+    
+    int childIndex = 0;
+    for (auto const& [edgeChar, child] : node->children) {
+        if (!child) continue;
+        
+        // Calculate child position
+        qreal childX = childStartX + childIndex * horizontalSpacing;
+        qreal childY = y + VERTICAL_SPACING;
+        
+        // Draw edge line
+        treeScene->addLine(x, y + NODE_RADIUS, childX, childY - NODE_RADIUS, 
+                          QPen(Qt::black, 2));
+        
+        // Get edge label text
+        int start = child->start;
+        int end = *(child->end);
+        int edgeLength = end - start + 1;
+        
+        // Limit edge label length for display
+        std::string edgeLabel = text.substr(start, std::min(edgeLength, 10));
+        if (edgeLength > 10) edgeLabel += "...";
+        
+        // Draw edge label
+        QGraphicsTextItem* edgeLabelItem = treeScene->addText(
+            QString::fromStdString(edgeLabel)
+        );
+        QFont edgeFont = edgeLabelItem->font();
+        edgeFont.setPointSize(8);
+        edgeLabelItem->setFont(edgeFont);
+        edgeLabelItem->setDefaultTextColor(Qt::blue);
+        
+        // Position edge label on the line
+        qreal labelX = (x + childX) / 2 - 15;
+        qreal labelY = (y + childY) / 2 - 20;
+        edgeLabelItem->setPos(labelX, labelY);
+        
+        // Add range indicator
+        QGraphicsTextItem* rangeLabel = treeScene->addText(
+            QString("[%1,%2]").arg(start).arg(end)
+        );
+        QFont rangeFont = rangeLabel->font();
+        rangeFont.setPointSize(7);
+        rangeLabel->setFont(rangeFont);
+        rangeLabel->setDefaultTextColor(Qt::darkGray);
+        rangeLabel->setPos(labelX, labelY + 15);
+        
+        // Recursively draw child with reduced spacing
+        drawNode(child, childX, childY, horizontalSpacing * 0.6, depth + 1, tree);
+        
+        childIndex++;
+    }
 }
