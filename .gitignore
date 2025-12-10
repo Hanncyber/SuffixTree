@@ -1,0 +1,25 @@
+# Build artifacts
+*.o
+*.obj
+*.exe
+SuffixTreeAnimation
+test_suffixtree
+
+# CMake build directory
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile.bak
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

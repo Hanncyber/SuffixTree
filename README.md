@@ -20,7 +20,9 @@ This project implements a suffix tree data structure with an animated visualizat
 - `SuffixTree.hpp` - Suffix tree class definition
 - `SuffixTree.cpp` - Suffix tree implementation (Ukkonen's algorithm)
 - `SuffixTreeGUI.cpp` - GUI visualization and animation
+- `test_suffixtree.cpp` - Test suite for suffix tree functionality
 - `Makefile` - Build configuration
+- `CMakeLists.txt` - CMake build configuration (alternative to Makefile)
 
 ## Prerequisites
 
@@ -58,7 +60,9 @@ You need a C++11 compatible compiler:
 make
 ```
 
-This will compile the application and create the `SuffixTreeAnimation` executable.
+This will compile both the GUI application and the test suite, creating:
+- `SuffixTreeAnimation` - The GUI visualization executable
+- `test_suffixtree` - The test suite executable
 
 ### Manual Compilation
 
@@ -68,6 +72,15 @@ If you don't have Make, you can compile manually:
 g++ -std=c++11 -o SuffixTreeAnimation SuffixTreeGUI.cpp SuffixTree.cpp -lsfml-graphics -lsfml-window -lsfml-system
 ```
 
+### Using CMake (Alternative)
+
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
+
 ### Checking Dependencies
 
 To verify SFML is installed correctly:
@@ -75,6 +88,16 @@ To verify SFML is installed correctly:
 ```bash
 make check-sfml
 ```
+
+### Running Tests
+
+To run the test suite without GUI:
+
+```bash
+make test
+```
+
+This runs the test program which verifies the suffix tree implementation without requiring a graphical display.
 
 ## Running
 
