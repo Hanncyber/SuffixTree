@@ -37,6 +37,8 @@ The implementation has been thoroughly tested and verified to be **CORRECT**:
 
 ## Building
 
+### Console Applications
+
 Use the provided Makefile:
 
 ```bash
@@ -54,6 +56,39 @@ Or compile manually:
 g++ -std=c++17 -o example example.cpp SuffixTree.cpp
 g++ -std=c++17 -o test test_suffix_tree.cpp SuffixTree.cpp
 ```
+
+### Qt GUI Application
+
+The project includes a graphical user interface built with Qt 5.
+
+**Prerequisites:**
+- Qt 5 development tools (qmake, Qt Widgets)
+
+**Installation on Ubuntu/Debian:**
+```bash
+sudo apt-get install qt5-qmake qtbase5-dev
+```
+
+**Build and run:**
+```bash
+make gui          # Build the GUI application
+make run-gui      # Build and run the GUI
+```
+
+Or manually:
+```bash
+qmake SuffixTreeGUI.pro
+make
+./SuffixTreeGUI
+```
+
+**GUI Features:**
+- Interactive text input for building suffix trees
+- Pattern search with visual feedback
+- Display of tree statistics (unique substrings, longest repeated substring, etc.)
+- Search results with occurrence indices and context
+- Autocomplete suggestions for patterns
+- Clean, user-friendly interface
 
 ## Usage Example
 
@@ -155,21 +190,60 @@ The implementation follows Ukkonen's online construction algorithm with:
 - **Space**: O(n) for storing the tree
 
 ## Files
+
+### Core Implementation
 - `Suffixtree.h` - Header file with class declaration
 - `SuffixTree.cpp` - Implementation of all methods
-- `example.cpp` - Example usage demonstrating GUI-ready output
+- `example.cpp` - Console example demonstrating core features
 - `test_suffix_tree.cpp` - Comprehensive test suite
 - `Makefile` - Build configuration
 
-## GUI Integration
+### GUI Application
+- `MainWindow.h` / `MainWindow.cpp` - Qt GUI window implementation
+- `main_gui.cpp` - GUI application entry point
+- `SuffixTreeGUI.pro` - Qt project configuration file
 
-The `printTree()` and `printStats()` methods provide text-based visualization that can be:
-1. Displayed directly in a console application
-2. Parsed and rendered in a graphical interface
-3. Used to generate graph visualizations (nodes and edges)
-4. Exported to formats like DOT for graphviz rendering
+## GUI Application
 
-The tree structure is correct and ready for GUI visualization in any framework (SFML, Qt, web-based, etc.).
+The project includes a full-featured Qt-based graphical user interface for interactive suffix tree exploration.
+
+### Features
+
+**Input & Tree Building:**
+- Enter custom text with automatic validation (ensures $ terminator)
+- One-click tree construction using Ukkonen's algorithm
+- Real-time statistics display
+
+**Pattern Search:**
+- Search for any pattern in the tree
+- View occurrence count and positions
+- See contextual snippets around matches
+- Autocomplete suggestions for partial patterns
+
+**Statistics Display:**
+- Text length and content
+- Total unique substrings
+- Longest repeated substring
+- Shortest unique substring
+
+**User Interface:**
+- Clean, modern Qt Widgets interface
+- Split-panel layout for easy navigation
+- Scrollable results and statistics panels
+- Interactive controls with instant feedback
+
+### Usage Example
+
+1. Launch the GUI application:
+   ```bash
+   make run-gui
+   ```
+
+2. Enter text in the input field (e.g., "banana$")
+3. Click "Build Suffix Tree" to construct the tree
+4. Enter a search pattern (e.g., "ana")
+5. Click "Search" to find all occurrences
+6. View results, statistics, and suggestions in the panels
 
 ## License
 
