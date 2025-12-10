@@ -13,7 +13,15 @@
 #include <string>
 #include <vector>
 
-using namespace std;
+// Constants
+const int ALPHABET_SIZE = 256;
+
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::string;
+using std::vector;
+using std::exception;
 
 // Helper function to count nodes in the tree
 int countNodes(Node* node, bool& hasLeaf) {
@@ -22,7 +30,7 @@ int countNodes(Node* node, bool& hasLeaf) {
     int count = 1;
     bool hasAnyLeaf = (node->suffixIndex != -1);
     
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < ALPHABET_SIZE; i++) {
         if (node->children[i] != nullptr) {
             bool childHasLeaf = false;
             count += countNodes(node->children[i]->dest, childHasLeaf);
@@ -125,7 +133,7 @@ void testTreeStructure() {
     
     // Check root has children
     bool hasChildren = false;
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < ALPHABET_SIZE; i++) {
         if (tree.root->children[i] != nullptr) {
             hasChildren = true;
             break;
