@@ -21,10 +21,12 @@ The application window is divided into several sections:
 - **Clear Button**: Reset all fields and clear the visualization
 
 ### 3. Tree Visualization Area (Left Panel)
-- Large graphics view showing tree information
+- Large graphics view displaying the suffix tree graph
+- Visual representation with nodes and edges
 - Scrollable and draggable for easy navigation
-- Currently displays text information about the tree structure
-- Future enhancements could include graphical node rendering
+- Shows edge labels with substrings and character ranges
+- Leaf nodes display suffix indices
+- Hierarchical layout with automatic spacing
 
 ### 4. Statistics Panel (Top Right)
 Displays comprehensive tree statistics including:
@@ -192,7 +194,7 @@ Shows detailed search results:
 ## Future Enhancements
 
 Potential improvements for future versions:
-- Graphical tree node rendering with edges
+- Enhanced tree layout algorithms for larger trees
 - Export tree structure to DOT format
 - Load text from files
 - Multiple text comparison
