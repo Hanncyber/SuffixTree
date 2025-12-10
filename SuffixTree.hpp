@@ -1,6 +1,9 @@
 #ifndef SUFFIXTREE_HPP
 #define SUFFIXTREE_HPP
 
+// Forward declaration
+class Edge;
+
 class Node {
 public:
     Edge* children[256]; // each child is an edge
