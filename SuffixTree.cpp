@@ -1,4 +1,4 @@
-#include "SuffixTree.h"
+#include "Suffixtree.h"
 #include <functional>
 
 //Constructor
@@ -284,6 +284,275 @@ string SuffixTree::getShortestUniqueSubstring() {
 
     if (minLen > treeText.length()) return "No unique substring found.";
     return shortest;
+}
+
+// Print tree structure for visualization
+void SuffixTree::printTree() {
+    cout << "Suffix Tree for: \"" << treeText << "\"\n";
+    cout << "===================================\n";
+    
+    function<void(SuffixNode*, string, int)> printNode = [&](SuffixNode* node, string prefix, int depth) {
+        if (!node) return;
+        
+        for (auto const& [key, child] : node->children) {
+            int start = child->start;
+            int end = *(child->end);
+            
+            // Get the edge label
+            string edgeLabel = treeText.substr(start, end - start + 1);
+            
+            // Print the edge
+            cout << prefix << "├─ [" << start << "," << end << "] \"" << edgeLabel << "\"";
+            
+            // If it's a leaf, print suffix index
+            if (child->suffixIndex != -1) {
+                cout << " (Suffix: " << child->suffixIndex << ")";
+            }
+            cout << "\n";
+            
+            // Recurse to children
+            printNode(child, prefix + "│  ", depth + 1);
+        }
+    };
+    
+    printNode(root, "", 0);
+    cout << "===================================\n";
+}
+
+// Print statistics about the tree
+void SuffixTree::printStats() {
+    int nodeCount = 0;
+    int leafCount = 0;
+    int internalCount = 0;
+    int maxDepth = 0;
+    
+    function<void(SuffixNode*, int)> countNodes = [&](SuffixNode* node, int depth) {
+        if (!node) return;
+        
+        nodeCount++;
+        maxDepth = max(maxDepth, depth);
+        
+        if (node->children.empty()) {
+            leafCount++;
+        } else {
+            internalCount++;
+        }
+        
+        for (auto const& [key, child] : node->children) {
+            countNodes(child, depth + 1);
+        }
+    };
+    
+    countNodes(root, 0);
+    
+    cout << "Suffix Tree Statistics:\n";
+    cout << "===================================\n";
+    cout << "Text: \"" << treeText << "\"\n";
+    cout << "Text Length: " << treeText.length() << "\n";
+    cout << "Total Nodes: " << nodeCount << "\n";
+    cout << "Leaf Nodes: " << leafCount << "\n";
+    cout << "Internal Nodes: " << internalCount << "\n";
+    cout << "Max Depth: " << maxDepth << "\n";
+    cout << "Unique Substrings: " << countAllUniqueSubstrings() << "\n";
+    cout << "===================================\n";
+}
+
+// Check if pattern exists in the text
+bool SuffixTree::contains(string pattern) {
+    return !getOccurrenceIndices(pattern).empty();
+}
+
+// Count occurrences of pattern
+int SuffixTree::countOccurrences(string pattern) {
+    return getOccurrenceIndices(pattern).size();
+}
+
+// Count leaf nodes in subtree
+int SuffixTree::countLeafNodes(SuffixNode* n) {
+    if (!n) return 0;
+    
+    if (n->children.empty()) {
+        return 1;
+    }
+    
+    int count = 0;
+    for (auto const& [key, child] : n->children) {
+        count += countLeafNodes(child);
+    }
+    return count;
+}
+
+// Get longest repeated substring
+string SuffixTree::getLongestRepeatedSubstring() {
+    int maxHeight = 0;
+    int startIndex = -1;
+    
+    findLRS(root, 0, &maxHeight, &startIndex);
+    
+    if (maxHeight == 0 || startIndex == -1) {
+        return "";
+    }
+    
+    return treeText.substr(startIndex, maxHeight);
+}
+
+// Helper to find longest repeated substring
+void SuffixTree::findLRS(SuffixNode* n, int labelHeight, int* maxHeight, int* startIndex) {
+    if (!n) return;
+    
+    // Recurse to children first
+    for (auto const& [key, child] : n->children) {
+        findLRS(child, labelHeight + edgeLength(child), maxHeight, startIndex);
+    }
+    
+    // Internal node with at least 2 children means repeated substring
+    // (we need at least 2 leaves under this node)
+    if (n != root && !n->children.empty() && labelHeight > *maxHeight) {
+        *maxHeight = labelHeight;
+        
+        // Find any leaf under this node to get a valid suffix index
+        // The LRS starts at position: suffixIndex (which is where this suffix starts)
+        // We need the substring of length labelHeight starting at suffixIndex
+        SuffixNode* temp = n;
+        while (!temp->children.empty()) {
+            temp = temp->children.begin()->second;
+        }
+        // The startIndex should be where this suffix starts
+        // Since labelHeight is the depth from root to this internal node,
+        // and temp->suffixIndex is where the full suffix starts,
+        // the repeated substring is at position temp->suffixIndex
+        *startIndex = temp->suffixIndex;
+    }
+}
+
+// Get longest common substring (for generalized suffix tree)
+string SuffixTree::getLongestCommonSubstring() {
+    // This requires a generalized suffix tree with multiple strings
+    // For now, return empty string
+    return "";
+}
+
+// Helper for LCS
+int SuffixTree::findLCS(SuffixNode* n, int labelHeight, int* maxHeight, int* startIndex, int splitIndex) {
+    // Implementation for generalized suffix tree
+    return 0;
+}
+
+// Autocomplete suggestions
+// Returns all suffixes that start with the given prefix
+// For word-based autocomplete, the text should contain word boundaries
+vector<string> SuffixTree::autoComplete(string prefix) {
+    vector<string> results;
+    
+    // Find the node corresponding to the prefix
+    SuffixNode* curr = root;
+    int i = 0;
+    
+    while (i < prefix.length()) {
+        char c = prefix[i];
+        
+        if (curr->children.find(c) == curr->children.end()) {
+            return results; // Prefix not found
+        }
+        
+        SuffixNode* next = curr->children[c];
+        int edgeLen = edgeLength(next);
+        
+        // Match characters along this edge
+        for (int j = 0; j < edgeLen && i < prefix.length(); j++) {
+            if (treeText[next->start + j] != prefix[i]) {
+                return results; // Mismatch
+            }
+            i++;
+        }
+        curr = next;
+    }
+    
+    // Now collect all suffixes from this node
+    function<void(SuffixNode*)> collectSuffixes = [&](SuffixNode* node) {
+        if (node->suffixIndex != -1) {
+            // Leaf node - we have a complete suffix starting at suffixIndex
+            results.push_back(treeText.substr(node->suffixIndex));
+            return;
+        }
+        
+        for (auto const& [key, child] : node->children) {
+            collectSuffixes(child);
+        }
+    };
+    
+    collectSuffixes(curr);
+    return results;
+}
+
+// Get context around pattern
+string SuffixTree::getContext(string pattern, int contextSize) {
+    vector<int> occurrences = getOccurrenceIndices(pattern);
+    
+    if (occurrences.empty()) {
+        return "";
+    }
+    
+    // Get context for first occurrence
+    int pos = occurrences[0];
+    int start = max(0, pos - contextSize);
+    int len = min((int)treeText.length() - start, (int)(pattern.length() + 2 * contextSize));
+    
+    return treeText.substr(start, len);
+}
+
+// Add string to generalized suffix tree
+void SuffixTree::addString(string newString) {
+    // For now, just append to existing text with a unique separator
+    // A full implementation would require tracking which string each suffix belongs to
+    if (newString.empty()) return;
+    
+    size_t oldLength = treeText.length();
+    treeText += "#" + newString;
+    
+    // Extend tree with new characters
+    // Start from the separator position
+    for (size_t i = oldLength; i < treeText.length(); i++) {
+        extendSuffixTree(i);
+    }
+    
+    // Re-label suffix indices
+    int labelHeight = 0;
+    setSuffixIndexByDFS(root, labelHeight);
+}
+
+// Get longest palindrome
+string SuffixTree::getLongestPalindrome() {
+    // This requires building a generalized suffix tree with the string and its reverse
+    // For a basic implementation, we can search for palindromes manually
+    string longest = "";
+    
+    for (int center = 0; center < treeText.length(); center++) {
+        // Odd length palindromes
+        int left = center, right = center;
+        while (left >= 0 && right < treeText.length() && treeText[left] == treeText[right]) {
+            int len = right - left + 1;
+            if (len > longest.length()) {
+                longest = treeText.substr(left, len);
+            }
+            left--;
+            right++;
+        }
+        
+        // Even length palindromes
+        left = center;
+        right = center + 1;
+        while (left >= 0 && right < treeText.length() && treeText[left] == treeText[right]) {
+            int len = right - left + 1;
+            if (len > longest.length()) {
+                longest = treeText.substr(left, len);
+            }
+            left--;
+            right++;
+        }
+    }
+    
+    return longest;
 }
 
 
