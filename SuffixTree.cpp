@@ -400,21 +400,28 @@ string SuffixTree::getLongestRepeatedSubstring() {
 void SuffixTree::findLRS(SuffixNode* n, int labelHeight, int* maxHeight, int* startIndex) {
     if (!n) return;
     
+    // Recurse to children first
+    for (auto const& [key, child] : n->children) {
+        findLRS(child, labelHeight + edgeLength(child), maxHeight, startIndex);
+    }
+    
     // Internal node with at least 2 children means repeated substring
-    if (!n->children.empty() && labelHeight > *maxHeight) {
+    // (we need at least 2 leaves under this node)
+    if (n != root && !n->children.empty() && labelHeight > *maxHeight) {
         *maxHeight = labelHeight;
         
-        // Find a leaf to get the starting index
+        // Find any leaf under this node to get a valid suffix index
+        // The LRS starts at position: suffixIndex (which is where this suffix starts)
+        // We need the substring of length labelHeight starting at suffixIndex
         SuffixNode* temp = n;
         while (!temp->children.empty()) {
             temp = temp->children.begin()->second;
         }
+        // The startIndex should be where this suffix starts
+        // Since labelHeight is the depth from root to this internal node,
+        // and temp->suffixIndex is where the full suffix starts,
+        // the repeated substring is at position temp->suffixIndex
         *startIndex = temp->suffixIndex;
-    }
-    
-    // Recurse to children
-    for (auto const& [key, child] : n->children) {
-        findLRS(child, labelHeight + edgeLength(child), maxHeight, startIndex);
     }
 }
 
@@ -432,6 +439,8 @@ int SuffixTree::findLCS(SuffixNode* n, int labelHeight, int* maxHeight, int* sta
 }
 
 // Autocomplete suggestions
+// Returns all suffixes that start with the given prefix
+// For word-based autocomplete, the text should contain word boundaries
 vector<string> SuffixTree::autoComplete(string prefix) {
     vector<string> results;
     
@@ -496,10 +505,14 @@ string SuffixTree::getContext(string pattern, int contextSize) {
 void SuffixTree::addString(string newString) {
     // For now, just append to existing text with a unique separator
     // A full implementation would require tracking which string each suffix belongs to
+    if (newString.empty()) return;
+    
+    size_t oldLength = treeText.length();
     treeText += "#" + newString;
     
     // Extend tree with new characters
-    for (int i = treeText.length() - newString.length() - 1; i < treeText.length(); i++) {
+    // Start from the separator position
+    for (size_t i = oldLength; i < treeText.length(); i++) {
         extendSuffixTree(i);
     }
     
