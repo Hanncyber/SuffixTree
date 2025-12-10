@@ -123,11 +123,16 @@ void MainWindow::onBuildTree() {
     }
     
     if (!text.endsWith("$")) {
-        QMessageBox::warning(this, "Input Error", 
+        QMessageBox::StandardButton reply = QMessageBox::question(this, "Input Error", 
             "Text must end with a unique terminator character '$'.\nDo you want to add it automatically?",
             QMessageBox::Yes | QMessageBox::No);
-        text += "$";
-        textInput->setText(text);
+        
+        if (reply == QMessageBox::Yes) {
+            text += "$";
+            textInput->setText(text);
+        } else {
+            return;
+        }
     }
     
     currentText = text;
