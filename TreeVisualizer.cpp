@@ -66,7 +66,7 @@ int TreeVisualizer::calculateSubtreePositions(SuffixNode* node, int x, int y, in
     return maxWidth;
 }
 
-void TreeVisualizer::paintEvent(QPaintEvent *event) {
+void TreeVisualizer::paintEvent(QPaintEvent *) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     
