@@ -37,9 +37,11 @@ private:
     std::map<SuffixNode*, NodePosition> nodePositions;
     int treeWidth;
     int treeHeight;
-    static const int NODE_RADIUS = 25;
-    static const int VERTICAL_SPACING = 100;
-    static const int MIN_HORIZONTAL_SPACING = 60;
+
+    // remove initialization here
+    static const int NODE_RADIUS;
+    static const int VERTICAL_SPACING;
+    static const int MIN_HORIZONTAL_SPACING;
 };
 
 #endif // TREEVISUALIZER_H
