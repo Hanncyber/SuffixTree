@@ -6,7 +6,7 @@
 #include <iostream>
 
 PredictionWindow::PredictionWindow(QWidget *parent)
-    : QWidget(parent), tree(nullptr), parent(parent) {
+    : QWidget(parent), tree(nullptr), parentWindow(parent) {
     setupUI();
     setWindowTitle("Predict Completions");
     resize(1000, 800);
@@ -185,8 +185,8 @@ void PredictionWindow::predictCompletions() {
 }
 
 void PredictionWindow::goBack() {
-    if (parent) {
-        parent->show();
+    if (parentWindow) {
+        parentWindow->show();
     }
     this->close();
 }

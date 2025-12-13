@@ -4,7 +4,7 @@
 #include <sstream>
 
 SearchWindow::SearchWindow(QWidget *parent)
-    : QWidget(parent), tree(nullptr), parent(parent) {
+    : QWidget(parent), tree(nullptr), parentWindow(parent) {
     setupUI();
     setWindowTitle("Search Pattern");
     resize(1000, 800);
@@ -169,8 +169,8 @@ void SearchWindow::searchPattern() {
 }
 
 void SearchWindow::goBack() {
-    if (parent) {
-        parent->show();
+    if (parentWindow) {
+        parentWindow->show();
     }
     this->close();
 }

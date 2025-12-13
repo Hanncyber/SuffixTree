@@ -38,7 +38,7 @@ private:
     TreeVisualizer *treeVisualizer;
     
     SuffixTree *tree;
-    QWidget *parent;
+    QWidget *parentWindow;
 };
 
 #endif // SEARCHWINDOW_H

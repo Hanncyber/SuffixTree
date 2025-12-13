@@ -37,7 +37,7 @@ private:
     TreeVisualizer *treeVisualizer;
     
     SuffixTree *tree;
-    QWidget *parent;
+    QWidget *parentWindow;
 };
 
 #endif // PATTERNWINDOW_H

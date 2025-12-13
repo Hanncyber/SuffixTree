@@ -5,7 +5,7 @@
 #include <iostream>
 
 MutationWindow::MutationWindow(QWidget *parent)
-    : QWidget(parent), tree(nullptr), parent(parent) {
+    : QWidget(parent), tree(nullptr), parentWindow(parent) {
     setupUI();
     setWindowTitle("DNA Mutation Detection");
     resize(1000, 800);
@@ -164,8 +164,8 @@ void MutationWindow::detectMutations() {
 }
 
 void MutationWindow::goBack() {
-    if (parent) {
-        parent->show();
+    if (parentWindow) {
+        parentWindow->show();
     }
     this->close();
 }
