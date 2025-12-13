@@ -5,6 +5,7 @@
 #include "PredictionWindow.h"
 #include <QFont>
 #include <QApplication>
+#include <QCloseEvent>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {
@@ -34,81 +35,11 @@ void MainWindow::setupUI() {
     titleLabel->setStyleSheet("QLabel { color: #2C3E50; margin-bottom: 20px; }");
     mainLayout->addWidget(titleLabel);
 
-    // Search Pattern Button
-    searchButton = new QPushButton("Search Pattern", this);
-    searchButton->setMinimumHeight(60);
-    searchButton->setStyleSheet(
-        "QPushButton {"
-        "   background-color: #3498DB;"
-        "   color: white;"
-        "   font-size: 16px;"
-        "   font-weight: bold;"
-        "   border-radius: 10px;"
-        "   padding: 10px;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: #2980B9;"
-        "}"
-    );
-    connect(searchButton, &QPushButton::clicked, this, &MainWindow::openSearchWindow);
-    mainLayout->addWidget(searchButton);
-
-    // DNA Mutation Detection Button
-    mutationButton = new QPushButton("DNA Mutation Detection", this);
-    mutationButton->setMinimumHeight(60);
-    mutationButton->setStyleSheet(
-        "QPushButton {"
-        "   background-color: #E74C3C;"
-        "   color: white;"
-        "   font-size: 16px;"
-        "   font-weight: bold;"
-        "   border-radius: 10px;"
-        "   padding: 10px;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: #C0392B;"
-        "}"
-    );
-    connect(mutationButton, &QPushButton::clicked, this, &MainWindow::openMutationWindow);
-    mainLayout->addWidget(mutationButton);
-
-    // Longest Repeated Pattern Button
-    patternButton = new QPushButton("Longest Repeated Pattern", this);
-    patternButton->setMinimumHeight(60);
-    patternButton->setStyleSheet(
-        "QPushButton {"
-        "   background-color: #2ECC71;"
-        "   color: white;"
-        "   font-size: 16px;"
-        "   font-weight: bold;"
-        "   border-radius: 10px;"
-        "   padding: 10px;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: #27AE60;"
-        "}"
-    );
-    connect(patternButton, &QPushButton::clicked, this, &MainWindow::openPatternWindow);
-    mainLayout->addWidget(patternButton);
-
-    // Prediction Completions Button
-    predictionButton = new QPushButton("Predict Completions", this);
-    predictionButton->setMinimumHeight(60);
-    predictionButton->setStyleSheet(
-        "QPushButton {"
-        "   background-color: #F39C12;"
-        "   color: white;"
-        "   font-size: 16px;"
-        "   font-weight: bold;"
-        "   border-radius: 10px;"
-        "   padding: 10px;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: #E67E22;"
-        "}"
-    );
-    connect(predictionButton, &QPushButton::clicked, this, &MainWindow::openPredictionWindow);
-    mainLayout->addWidget(predictionButton);
+    // Buttons
+    createButton("Search Pattern", "#3498DB", "#2980B9", &MainWindow::openSearchWindow);
+    createButton("DNA Mutation Detection", "#E74C3C", "#C0392B", &MainWindow::openMutationWindow);
+    createButton("Longest Repeated Pattern", "#2ECC71", "#27AE60", &MainWindow::openPatternWindow);
+    createButton("Predict Completions", "#F39C12", "#E67E22", &MainWindow::openPredictionWindow);
 
     // Exit Button
     exitButton = new QPushButton("Exit", this);
@@ -121,7 +52,7 @@ void MainWindow::setupUI() {
         "   font-weight: bold;"
         "   border-radius: 10px;"
         "   padding: 10px;"
-        "}"
+        "} "
         "QPushButton:hover {"
         "   background-color: #7F8C8D;"
         "}"
@@ -132,28 +63,58 @@ void MainWindow::setupUI() {
     mainLayout->addStretch();
 }
 
+// Helper function to create buttons
+void MainWindow::createButton(const QString& text, const QString& color, const QString& hoverColor, void (MainWindow::*slot)()) {
+    QPushButton* button = new QPushButton(text, this);
+    button->setMinimumHeight(60);
+    button->setStyleSheet(
+        QString("QPushButton {"
+                "   background-color: %1;"
+                "   color: white;"
+                "   font-size: 16px;"
+                "   font-weight: bold;"
+                "   border-radius: 10px;"
+                "   padding: 10px;"
+                "} "
+                "QPushButton:hover {"
+                "   background-color: %2;"
+                "}")
+            .arg(color)
+            .arg(hoverColor)
+    );
+    connect(button, &QPushButton::clicked, this, slot);
+    mainLayout->addWidget(button);
+}
+
+// Open windows with independent lifetime
 void MainWindow::openSearchWindow() {
-    SearchWindow *searchWindow = new SearchWindow(this);
-    searchWindow->show();
-    this->hide();
+    openChildWindow<SearchWindow>();
 }
 
 void MainWindow::openMutationWindow() {
-    MutationWindow *mutationWindow = new MutationWindow(this);
-    mutationWindow->show();
-    this->hide();
+    openChildWindow<MutationWindow>();
 }
 
 void MainWindow::openPatternWindow() {
-    PatternWindow *patternWindow = new PatternWindow(this);
-    patternWindow->show();
-    this->hide();
+    openChildWindow<PatternWindow>();
 }
 
 void MainWindow::openPredictionWindow() {
-    PredictionWindow *predictionWindow = new PredictionWindow(this);
-    predictionWindow->show();
+    openChildWindow<PredictionWindow>();
+}
+
+// Template to open any child window
+template <typename T>
+void MainWindow::openChildWindow() {
+    T* childWindow = new T(); // no parent
+    childWindow->setAttribute(Qt::WA_DeleteOnClose); // auto-delete when closed
+    childWindow->show();
     this->hide();
+
+    // Restore main window when child closes
+    connect(childWindow, &QWidget::destroyed, [this]() {
+        this->show();
+    });
 }
 
 void MainWindow::exitApplication() {

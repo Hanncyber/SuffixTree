@@ -31,6 +31,8 @@ private:
     QPushButton *patternButton;
     QPushButton *predictionButton;
     QPushButton *exitButton;
+    template <typename T>
+    void openChildWindow();
 };
 
 #endif // MAINWINDOW_H
