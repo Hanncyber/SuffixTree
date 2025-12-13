@@ -1,0 +1,16 @@
+# Build artifacts
+*.o
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+Makefile.gui
+.qmake.stash
+moc_predefs.h
+
+# Executables
+suffix_tree_cli
+SuffixTreeGUI
+
+# Build directories
+build/
