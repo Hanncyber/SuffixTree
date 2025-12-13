@@ -5,6 +5,7 @@ moc_*.h
 qrc_*.cpp
 ui_*.h
 Makefile.gui
+Makefile.qt
 .qmake.stash
 moc_predefs.h
 
