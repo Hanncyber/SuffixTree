@@ -304,7 +304,7 @@ void SuffixTree::detect_longest_pattern()
     }
 }
 
-void SuffixTree::predictCompletions(const string& prefix, int maxSuggestions = 5)
+void SuffixTree::predictCompletions(const string& prefix, int maxSuggestions)
 {
     SuffixNode* cur = root;
     int i = 0;
