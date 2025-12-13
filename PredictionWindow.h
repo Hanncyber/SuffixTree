@@ -40,7 +40,7 @@ private:
     TreeVisualizer *treeVisualizer;
     
     SuffixTree *tree;
-    QWidget *parent;
+    QWidget *parentWindow;
 };
 
 #endif // PREDICTIONWINDOW_H
