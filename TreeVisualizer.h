@@ -26,7 +26,7 @@ protected:
 
 private:
     void calculatePositions();
-    int calculateSubtreePositions(SuffixNode* node, int x, int y, int horizontalSpacing);
+    int calculateSubtreePositions(SuffixNode* node, int xOffset, int depth = 0);
     void drawNode(QPainter& painter, SuffixNode* node, int x, int y);
     void drawEdge(QPainter& painter, int x1, int y1, int x2, int y2, const QString& label);
     QString getEdgeLabel(SuffixNode* node);

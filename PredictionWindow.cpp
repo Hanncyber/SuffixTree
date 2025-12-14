@@ -2,15 +2,13 @@
 #include <QMessageBox>
 #include <QFont>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <sstream>
 #include <iostream>
-
 
 PredictionWindow::PredictionWindow(QWidget *parent)
     : QWidget(parent), tree(nullptr), parentWindow(parent) {
     setupUI();
-    setWindowTitle("Predict Completions");
+    setWindowTitle("Predict Word Completions");
     resize(900, 700);
 }
 
@@ -20,25 +18,24 @@ PredictionWindow::~PredictionWindow() {
 
 void PredictionWindow::setupUI() {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(15, 15, 15, 15);
     mainLayout->setSpacing(10);
+    mainLayout->setContentsMargins(15, 15, 15, 15);
 
-    // ---------- Title ----------
-    QLabel *title = new QLabel("Suffix Tree Completion Predictor", this);
+    // Title
+    QLabel *title = new QLabel("Word Prediction from Prefix", this);
     QFont titleFont = title->font();
     titleFont.setPointSize(20);
     titleFont.setBold(true);
     title->setFont(titleFont);
     title->setAlignment(Qt::AlignCenter);
-    title->setStyleSheet("color: #F39C12;");
+    title->setStyleSheet("QLabel { color: #F39C12; }");
     mainLayout->addWidget(title);
 
-    // ---------- Text input ----------
+    // Text input layout
     QHBoxLayout *textLayout = new QHBoxLayout();
     textInput = new QLineEdit(this);
-    textInput->setPlaceholderText("Enter text to build suffix tree, e.g., hello world");
+    textInput->setPlaceholderText("Enter paragraph or text...");
     textInput->setStyleSheet("QLineEdit { font-size: 13px; padding: 4px; }");
-
     buildButton = new QPushButton("Build Tree", this);
     buildButton->setStyleSheet(
         "QPushButton { background-color: #F39C12; color: white; font-weight: bold; border-radius: 5px; padding: 5px; }"
@@ -50,10 +47,10 @@ void PredictionWindow::setupUI() {
     textLayout->addWidget(buildButton, 1);
     mainLayout->addLayout(textLayout);
 
-    // ---------- Prefix input ----------
+    // Prefix input layout
     QHBoxLayout *prefixLayout = new QHBoxLayout();
     prefixInput = new QLineEdit(this);
-    prefixInput->setPlaceholderText("Enter prefix, e.g., hel");
+    prefixInput->setPlaceholderText("Enter prefix to predict...");
     prefixInput->setStyleSheet("QLineEdit { font-size: 13px; padding: 4px; }");
     prefixInput->setEnabled(false);
 
@@ -70,42 +67,26 @@ void PredictionWindow::setupUI() {
     prefixLayout->addWidget(predictButton, 1);
     mainLayout->addLayout(prefixLayout);
 
-    // ---------- Max suggestions ----------
-    QHBoxLayout *maxLayout = new QHBoxLayout();
-    QLabel *maxLabel = new QLabel("Max suggestions:", this);
-    maxLabel->setStyleSheet("QLabel { font-size: 13px; font-weight: bold; }");
-    maxLayout->addWidget(maxLabel);
-
-    maxSuggestionsInput = new QSpinBox(this);
-    maxSuggestionsInput->setMinimum(1);
-    maxSuggestionsInput->setMaximum(20);
-    maxSuggestionsInput->setValue(5);
-    maxSuggestionsInput->setStyleSheet("QSpinBox { font-size: 13px; padding: 4px; }");
-    maxSuggestionsInput->setEnabled(false);
-    maxLayout->addWidget(maxSuggestionsInput);
-    maxLayout->addStretch();
-    mainLayout->addLayout(maxLayout);
-
-    // ---------- Result display ----------
+    // Result display
     resultText = new QTextEdit(this);
     resultText->setReadOnly(true);
     resultText->setMaximumHeight(120);
     resultText->setStyleSheet(
-        "QTextEdit { font-size: 13px; background-color: #2C3E50; color: #ECF0F1; font-family: monospace; border: 1px solid #34495E; padding: 4px; }"
+        "QTextEdit { font-size: 13px; background-color: #2C3E50; color: #ECF0F1; font-family: monospace; border: 1px solid #34495E; }"
         );
     mainLayout->addWidget(resultText);
 
-    // ---------- Tree visualizer ----------
+    // Tree visualizer in scroll area
     scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
-    scrollArea->setMinimumHeight(250);
-    scrollArea->setStyleSheet("QScrollArea { border: 1px solid #34495E; border-radius: 4px; }");
+    scrollArea->setMinimumHeight(400);
+    scrollArea->setStyleSheet("QScrollArea { border: 1px solid #34495E; }");
 
     treeVisualizer = new TreeVisualizer(nullptr, "", this);
     scrollArea->setWidget(treeVisualizer);
     mainLayout->addWidget(scrollArea);
 
-    // ---------- Back button ----------
+    // Back button
     backButton = new QPushButton("Back to Main Menu", this);
     backButton->setStyleSheet(
         "QPushButton { background-color: #95A5A6; color: white; font-weight: bold; border-radius: 5px; padding: 5px; }"
@@ -129,10 +110,9 @@ void PredictionWindow::buildTree() {
         treeVisualizer->setTree(tree->getRoot(), tree->getText());
 
         prefixInput->setEnabled(true);
-        maxSuggestionsInput->setEnabled(true);
         predictButton->setEnabled(true);
-        resultText->setText("Suffix tree built successfully!");
-    } catch (const std::exception& e) {
+        resultText->setText("Suffix tree built successfully! Enter a prefix to predict words.");
+    } catch (const std::exception &e) {
         QMessageBox::critical(this, "Error", QString("Failed to build tree: %1").arg(e.what()));
     }
 }
@@ -149,12 +129,12 @@ void PredictionWindow::predictCompletions() {
         return;
     }
 
-    int maxSuggestions = maxSuggestionsInput->value();
-
-    // Capture output
+    // Redirect output to resultText
     std::stringstream buffer;
-    std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
-    tree->predictCompletions(prefix.toStdString(), maxSuggestions);
+    std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
+
+    tree->predictCompletions(prefix.toStdString(), 10); // up to 10 suggestions
+
     std::cout.rdbuf(old);
 
     resultText->setText(QString::fromStdString(buffer.str()));

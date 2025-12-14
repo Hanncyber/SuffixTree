@@ -1,12 +1,13 @@
 #include "TreeVisualizer.h"
 #include <QPainter>
+#include <QPainterPath>
 #include <QFontMetrics>
 #include <algorithm>
 
 // ----------------- static constants -----------------
-const int TreeVisualizer::NODE_RADIUS = 14;
+const int TreeVisualizer::NODE_RADIUS = 16;
 const int TreeVisualizer::VERTICAL_SPACING = 90;
-const int TreeVisualizer::MIN_HORIZONTAL_SPACING = 70;
+const int TreeVisualizer::MIN_HORIZONTAL_SPACING = 40;
 
 // ----------------- Constructor -----------------
 TreeVisualizer::TreeVisualizer(SuffixNode* root,
@@ -14,9 +15,7 @@ TreeVisualizer::TreeVisualizer(SuffixNode* root,
                                QWidget *parent)
     : QWidget(parent),
     rootNode(root),
-    treeText(text),
-    treeWidth(800),
-    treeHeight(600)
+    treeText(text)
 {
     setMinimumSize(800, 600);
     calculatePositions();
@@ -36,60 +35,55 @@ void TreeVisualizer::calculatePositions() {
     if (!rootNode) return;
 
     nodePositions.clear();
-    treeWidth = calculateSubtreePositions(rootNode, width() / 2, 40, 300);
+    int totalWidth = calculateSubtreePositions(rootNode, 0);
+    // Shift tree to center
+    for (auto& it : nodePositions) {
+        it.second.x += width() / 2 - totalWidth / 2;
+    }
     treeHeight = 600;
-
-    setMinimumSize(std::max(800, treeWidth + 100), treeHeight);
+    setMinimumSize(std::max(800, totalWidth + 100), treeHeight);
 }
 
 // ----------------- Recursive layout -----------------
-int TreeVisualizer::calculateSubtreePositions(SuffixNode* node,
-                                              int x,
-                                              int y,
-                                              int spacing)
-{
-    if (!node) return x;
-
-    nodePositions[node] = { x, y, node };
+int TreeVisualizer::calculateSubtreePositions(SuffixNode* node, int xOffset, int depth) {
+    if (!node) return 0;
 
     std::vector<SuffixNode*> children;
-    for (int i = 0; i < 128; ++i) {
-        if (node->children[i]) {
-            children.push_back(node->children[i]);
+    for (int i = 0; i < 128; ++i)
+        if (node->children[i]) children.push_back(node->children[i]);
+
+    int subtreeWidth = 0;
+    std::vector<int> childCenters;
+
+    for (auto child : children) {
+        int w = calculateSubtreePositions(child, xOffset + subtreeWidth, depth + 1);
+        childCenters.push_back(xOffset + subtreeWidth + w / 2);
+        subtreeWidth += w + MIN_HORIZONTAL_SPACING;
+    }
+
+    if (children.empty()) {
+        subtreeWidth = MIN_HORIZONTAL_SPACING;
+        nodePositions[node] = {xOffset, 40 + depth * VERTICAL_SPACING, node};
+    } else {
+        int parentX = childCenters.front() + (childCenters.back() - childCenters.front()) / 2;
+        nodePositions[node] = {parentX, 40 + depth * VERTICAL_SPACING, node};
+        for (auto child : children) {
+            nodePositions[child].y = 40 + (depth + 1) * VERTICAL_SPACING;
         }
     }
 
-    if (children.empty()) return x;
-
-    int childSpacing = std::max(MIN_HORIZONTAL_SPACING,
-                                spacing / (int)children.size());
-    int startX = x - (childSpacing * ((int)children.size() - 1)) / 2;
-
-    int maxX = x;
-    for (size_t i = 0; i < children.size(); ++i) {
-        maxX = std::max(
-            maxX,
-            calculateSubtreePositions(
-                children[i],
-                startX + (int)i * childSpacing,
-                y + VERTICAL_SPACING,
-                childSpacing
-                )
-            );
-    }
-
-    return maxX;
+    return subtreeWidth;
 }
+
 
 // ----------------- Paint event -----------------
 void TreeVisualizer::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-
     painter.fillRect(rect(), Qt::white);
 
     QFont mono("Consolas");
-    mono.setPointSize(8);
+    mono.setPointSize(9);
     painter.setFont(mono);
 
     if (!rootNode) {
@@ -106,13 +100,9 @@ void TreeVisualizer::paintEvent(QPaintEvent*) {
             if (node->children[i]) {
                 auto childIt = nodePositions.find(node->children[i]);
                 if (childIt != nodePositions.end()) {
-                    drawEdge(
-                        painter,
-                        pos.x, pos.y,
-                        childIt->second.x,
-                        childIt->second.y,
-                        getEdgeLabel(node->children[i])
-                        );
+                    drawEdge(painter, pos.x, pos.y,
+                             childIt->second.x, childIt->second.y,
+                             getEdgeLabel(node->children[i]));
                 }
             }
         }
@@ -130,7 +120,7 @@ void TreeVisualizer::drawNode(QPainter& painter,
                               int x,
                               int y)
 {
-    painter.setBrush(Qt::white);
+    painter.setBrush(node->suffix_index != -1 ? Qt::yellow : Qt::white);
     painter.setPen(QPen(Qt::black, 1));
     painter.drawEllipse(QPoint(x, y), NODE_RADIUS, NODE_RADIUS);
 
@@ -144,20 +134,23 @@ void TreeVisualizer::drawNode(QPainter& painter,
     }
 }
 
-// ----------------- Draw edge -----------------
+// ----------------- Draw curved edge -----------------
 void TreeVisualizer::drawEdge(QPainter& painter,
                               int x1, int y1,
                               int x2, int y2,
                               const QString& label)
 {
+    QPainterPath path;
+    path.moveTo(x1, y1 + NODE_RADIUS);
+    int midY = (y1 + y2) / 2;
+    path.cubicTo(x1, midY, x2, midY, x2, y2 - NODE_RADIUS);
     painter.setPen(QPen(Qt::black, 1));
-    painter.drawLine(x1, y1 + NODE_RADIUS,
-                     x2, y2 - NODE_RADIUS);
+    painter.drawPath(path);
 
     if (!label.isEmpty()) {
         int mx = (x1 + x2) / 2;
-        int my = (y1 + y2) / 2;
-        painter.drawText(mx + 3, my - 2, label);
+        int my = midY - 5;
+        painter.drawText(mx, my, label);
     }
 }
 
@@ -179,5 +172,5 @@ QString TreeVisualizer::getEdgeLabel(SuffixNode* node) {
 
 // ----------------- Size hint -----------------
 QSize TreeVisualizer::sizeHint() const {
-    return QSize(treeWidth, treeHeight);
+    return QSize(width(), treeHeight);
 }

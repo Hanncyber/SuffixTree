@@ -306,12 +306,13 @@ void SuffixTree::detect_longest_pattern()
     }
 }
 
-void SuffixTree::predictCompletions(const std::string& prefix, int maxSuggestions) {
+void SuffixTree::predictCompletions(const std::string& prefix, int maxSuggestions)
+{
     SuffixNode* cur = root;
     int i = 0;
 
     // Traverse the tree along the prefix
-    while (i < (int)prefix.length()) {
+    while (i < (int)prefix.length()){
         char c = prefix[i];
         if (!cur->children[(int)c]) {
             std::cout << "No suggestions found for \"" << prefix << "\"\n";
@@ -320,51 +321,51 @@ void SuffixTree::predictCompletions(const std::string& prefix, int maxSuggestion
         SuffixNode* next = cur->children[(int)c];
         int edgeLen = edgeLength(next);
 
-        for (int k = 0; k < edgeLen && i < (int)prefix.length(); k++, i++) {
+        for (int k = 0; k < edgeLen && i < (int)prefix.length(); k++, i++)
+        {
             if (treeText[next->start + k] != prefix[i]) {
-                std::cout << "No suggestions found for \"" << prefix << "\".\n";
+                std::cout << "No suggestions found for \"" << prefix << "\"\n";
                 return;
             }
         }
         cur = next;
     }
 
-    int leafIndices[1000];
-    int leafCount = 0;
-    collectLeafIndices(cur, leafIndices, leafCount);
+    // Collect all starting positions of words that match the prefix
+    int positions[1000];
+    int count = 0;
+    collectLeafIndices(cur, positions, count);
 
     std::cout << "Prefix given \"" << prefix << "\":\n";
 
-    int printed = 0;
+    int suggestionsCount = 0;
+    for (int j = 0; j < count && suggestionsCount < maxSuggestions; j++)
+    {
+        int start = positions[j];
 
-    for (int j = 0; j < leafCount && printed < maxSuggestions; j++) {
-        int start = leafIndices[j];
+        // Extract the full word starting from this position
         std::string word;
-
-        // Read characters until space, punctuation, or end of text
         for (int k = start; k < (int)treeText.length(); k++) {
             char ch = treeText[k];
-            if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '.' || ch == ',' || ch == ';') break;
+            if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '.' || ch == ',' || ch == '$') break;
             word += ch;
         }
 
-        // check duplicate manually
-        bool duplicate = false;
-        for (int m = 0; m < printed; m++) {
-            if (word == treeText.substr(leafIndices[m], word.length())) {
-                duplicate = true;
+        // Check if word starts with prefix
+        bool match = true;
+        for (int k = 0; k < (int)prefix.length(); k++) {
+            if (k >= (int)word.length() || word[k] != prefix[k]) {
+                match = false;
                 break;
             }
         }
+        if (!match) continue;
 
-        if (!duplicate && word.length() > 0) {
-            std::cout << "  " << word << "\n";
-            leafIndices[printed] = start; // keep track for duplicate check
-            printed++;
-        }
+        std::cout << "  " << word << "\n";
+        suggestionsCount++;
     }
 
-    if (printed == 0) {
-        std::cout << "  No completions found.\n";
+    if (suggestionsCount == 0) {
+        std::cout << "  No suggestions found.\n";
     }
 }
