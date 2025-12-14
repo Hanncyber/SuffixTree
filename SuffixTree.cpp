@@ -186,72 +186,6 @@ int* SuffixTree::search(const string& pattern, int& count) {
     return result;
 }
 
-void SuffixTree::detectDNAMutationss(const std::string& sample) {
-    std::cout << "Mutation Report:\n";
-
-    int n = sample.length();
-    int i = 0;
-
-    while (i < n) {
-        SuffixNode* cur = root;
-        int pos = i;
-        bool mutationDetected = false;
-        int refPos = -1; // position in reference
-        char refBase = '-';
-        char sampleBase = sample[pos];
-
-        while (pos < n && cur) {
-            char c = sample[pos];
-
-            if (!cur->children[(int)c]) {
-                // The sample has a base that does not continue in reference
-                // Could be insertion if current node still has other edges
-                mutationDetected = true;
-                break;
-            }
-
-            SuffixNode* next = cur->children[(int)c];
-            int edgeLen = edgeLength(next);
-
-            for (int k = 0; k < edgeLen && pos < n; k++, pos++) {
-                if (treeText[next->start + k] != sample[pos]) {
-                    // substitution: both sample and reference advance
-                    mutationDetected = true;
-                    refPos = next->start + k;
-                    refBase = treeText[refPos];
-                    break;
-                }
-            }
-
-            if (mutationDetected) break;
-            cur = next;
-        }
-
-        if (mutationDetected) {
-            std::cout << "Mutation at sample index " << i << ":\n";
-
-            if (refPos == -1) {
-                // insertion: sample character not in reference edge
-                std::cout << "  Sample base:    " << sample[i] << "\n";
-                std::cout << "  Type: Insertion\n\n";
-            } else {
-                // substitution
-                std::cout << "  Reference base: " << refBase << "\n";
-                std::cout << "  Sample base:    " << sample[i] << "\n";
-                std::cout << "  Type: Substitution\n\n";
-            }
-
-            i++; // move to next base
-        } else {
-            break; // remaining part matches
-        }
-    }
-
-    std::cout << "End of report.\n";
-}
-
-
-
 //find deepest internal node (longest repeated substring)
 void SuffixTree::find_longest_repeatedSubstring(
     SuffixNode* node,
@@ -265,9 +199,9 @@ void SuffixTree::find_longest_repeatedSubstring(
     bool is_leaf = (node->suffix_index != -1);
 
     if (!is_leaf) {
-        for (int i = 0; i < 128; i++) 
+        for (int i = 0; i < 128; i++)
         {
-            if (node->children[i]) 
+            if (node->children[i])
             {
                 find_longest_repeatedSubstring(
                     node->children[i],
@@ -310,8 +244,6 @@ void SuffixTree::predictCompletions(const std::string& prefix, int maxSuggestion
 {
     SuffixNode* cur = root;
     int i = 0;
-
-    // Traverse the tree along the prefix
     while (i < (int)prefix.length()){
         char c = prefix[i];
         if (!cur->children[(int)c]) {
@@ -319,9 +251,9 @@ void SuffixTree::predictCompletions(const std::string& prefix, int maxSuggestion
             return;
         }
         SuffixNode* next = cur->children[(int)c];
-        int edgeLen = edgeLength(next);
+        int edgelen = edgeLength(next);
 
-        for (int k = 0; k < edgeLen && i < (int)prefix.length(); k++, i++)
+        for (int k = 0; k < edgelen && i < (int)prefix.length(); k++, i++)
         {
             if (treeText[next->start + k] != prefix[i]) {
                 std::cout << "No suggestions found for \"" << prefix << "\"\n";
@@ -330,8 +262,6 @@ void SuffixTree::predictCompletions(const std::string& prefix, int maxSuggestion
         }
         cur = next;
     }
-
-    // Collect all starting positions of words that match the prefix
     int positions[1000];
     int count = 0;
     collectLeafIndices(cur, positions, count);
@@ -342,29 +272,23 @@ void SuffixTree::predictCompletions(const std::string& prefix, int maxSuggestion
     for (int j = 0; j < count && suggestionsCount < maxSuggestions; j++)
     {
         int start = positions[j];
-
-        // Extract the full word starting from this position
         std::string word;
         for (int k = start; k < (int)treeText.length(); k++) {
             char ch = treeText[k];
             if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '.' || ch == ',' || ch == '$') break;
             word += ch;
         }
-
-        // Check if word starts with prefix
-        bool match = true;
+        bool found = true;
         for (int k = 0; k < (int)prefix.length(); k++) {
             if (k >= (int)word.length() || word[k] != prefix[k]) {
-                match = false;
+                found = false;
                 break;
             }
         }
-        if (!match) continue;
-
+        if (!found) continue;
         std::cout << "  " << word << "\n";
         suggestionsCount++;
     }
-
     if (suggestionsCount == 0) {
         std::cout << "  No suggestions found.\n";
     }

@@ -36,7 +36,6 @@ void MainWindow::setupUI() {
     struct BtnInfo { QString text; QString color; std::function<void()> slot; };
     QList<BtnInfo> buttons = {
         { "Search Pattern", "#3498DB", [this]() { openSearchWindow(); } },
-        { "DNA Mutation Detection", "#E74C3C", [this]() { openMutationWindow(); } },
         { "Longest Repeated Pattern", "#F39C12", [this]() { openPatternWindow(); } },
         { "Predict Completions", "#2ECC71", [this]() { openPredictionWindow(); } },
         { "Exit", "#95A5A6", [this]() { exitApplication(); } }

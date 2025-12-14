@@ -134,8 +134,6 @@ void MutationWindow::detectMutations() {
     std::stringstream buffer;
     std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
 
-    tree->detectDNAMutationss(sample.toStdString());  // ensure this prints to std::cout
-
     std::cout.rdbuf(old);
 
     resultText->setText(QString::fromStdString(buffer.str()));
