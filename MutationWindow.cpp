@@ -1,6 +1,7 @@
 #include "MutationWindow.h"
 #include <QMessageBox>
 #include <QFont>
+#include <QHBoxLayout>
 #include <sstream>
 #include <iostream>
 
@@ -8,7 +9,7 @@ MutationWindow::MutationWindow(QWidget *parent)
     : QWidget(parent), tree(nullptr), parentWindow(parent) {
     setupUI();
     setWindowTitle("DNA Mutation Detection");
-    resize(1000, 800);
+    resize(900, 700);
 }
 
 MutationWindow::~MutationWindow() {
@@ -16,107 +17,84 @@ MutationWindow::~MutationWindow() {
 }
 
 void MutationWindow::setupUI() {
-    mainLayout = new QVBoxLayout(this);
-    mainLayout->setSpacing(15);
-    mainLayout->setContentsMargins(20, 20, 20, 20);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setSpacing(10);
+    mainLayout->setContentsMargins(15, 15, 15, 15);
 
-    // Title
-    titleLabel = new QLabel("DNA Mutation Detection", this);
-    QFont titleFont = titleLabel->font();
+    // ---------- Title ----------
+    QLabel *title = new QLabel("DNA Mutation Detection", this);
+    QFont titleFont = title->font();
     titleFont.setPointSize(20);
     titleFont.setBold(true);
-    titleLabel->setFont(titleFont);
-    titleLabel->setAlignment(Qt::AlignCenter);
-    titleLabel->setStyleSheet("QLabel { color: #E74C3C; margin-bottom: 10px; }");
-    mainLayout->addWidget(titleLabel);
+    title->setFont(titleFont);
+    title->setAlignment(Qt::AlignCenter);
+    title->setStyleSheet("color: #E74C3C;");
+    mainLayout->addWidget(title);
 
-    // Reference DNA input
-    QLabel *refLabel = new QLabel("Enter reference DNA sequence:", this);
-    refLabel->setStyleSheet("QLabel { font-size: 14px; font-weight: bold; }");
-    mainLayout->addWidget(refLabel);
-    
+    // ---------- Reference DNA input ----------
+    QHBoxLayout *refLayout = new QHBoxLayout();
     referenceInput = new QLineEdit(this);
-    referenceInput->setPlaceholderText("e.g., ACGTACGT");
-    referenceInput->setMinimumHeight(35);
-    referenceInput->setStyleSheet("QLineEdit { padding: 5px; font-size: 13px; }");
-    mainLayout->addWidget(referenceInput);
+    referenceInput->setPlaceholderText("Enter reference DNA, e.g., ACGTACGT");
+    referenceInput->setStyleSheet("QLineEdit { font-size: 13px; padding: 4px; }");
 
     buildButton = new QPushButton("Build Reference Tree", this);
-    buildButton->setMinimumHeight(40);
     buildButton->setStyleSheet(
-        "QPushButton {"
-        "   background-color: #E74C3C;"
-        "   color: white;"
-        "   font-size: 14px;"
-        "   font-weight: bold;"
-        "   border-radius: 5px;"
-        "}"
+        "QPushButton { background-color: #E74C3C; color: white; font-weight: bold; border-radius: 5px; padding: 5px; }"
         "QPushButton:hover { background-color: #C0392B; }"
-    );
+        );
     connect(buildButton, &QPushButton::clicked, this, &MutationWindow::buildTree);
-    mainLayout->addWidget(buildButton);
 
-    // Sample DNA input
-    QLabel *sampleLabel = new QLabel("Enter sample DNA sequence:", this);
-    sampleLabel->setStyleSheet("QLabel { font-size: 14px; font-weight: bold; margin-top: 10px; }");
-    mainLayout->addWidget(sampleLabel);
-    
+    refLayout->addWidget(referenceInput, 3);
+    refLayout->addWidget(buildButton, 1);
+    mainLayout->addLayout(refLayout);
+
+    // ---------- Sample DNA input ----------
+    QHBoxLayout *sampleLayout = new QHBoxLayout();
     sampleInput = new QLineEdit(this);
-    sampleInput->setPlaceholderText("e.g., ACTTACGT");
-    sampleInput->setMinimumHeight(35);
-    sampleInput->setStyleSheet("QLineEdit { padding: 5px; font-size: 13px; }");
+    sampleInput->setPlaceholderText("Enter sample DNA, e.g., ACTTACGT");
+    sampleInput->setStyleSheet("QLineEdit { font-size: 13px; padding: 4px; }");
     sampleInput->setEnabled(false);
-    mainLayout->addWidget(sampleInput);
 
     detectButton = new QPushButton("Detect Mutations", this);
-    detectButton->setMinimumHeight(40);
     detectButton->setStyleSheet(
-        "QPushButton {"
-        "   background-color: #2ECC71;"
-        "   color: white;"
-        "   font-size: 14px;"
-        "   font-weight: bold;"
-        "   border-radius: 5px;"
-        "}"
+        "QPushButton { background-color: #2ECC71; color: white; font-weight: bold; border-radius: 5px; padding: 5px; }"
         "QPushButton:hover { background-color: #27AE60; }"
         "QPushButton:disabled { background-color: #BDC3C7; }"
-    );
+        );
     detectButton->setEnabled(false);
     connect(detectButton, &QPushButton::clicked, this, &MutationWindow::detectMutations);
-    mainLayout->addWidget(detectButton);
 
-    // Result text
+    sampleLayout->addWidget(sampleInput, 3);
+    sampleLayout->addWidget(detectButton, 1);
+    mainLayout->addLayout(sampleLayout);
+
+    // ---------- Result area ----------
     resultText = new QTextEdit(this);
     resultText->setReadOnly(true);
-    resultText->setMaximumHeight(150);
-    resultText->setStyleSheet("QTextEdit { font-size: 12px; background-color: #ECF0F1; font-family: monospace; }");
+    resultText->setMaximumHeight(100);
+    resultText->setStyleSheet(
+        "QTextEdit { font-size: 13px; background-color: #2C3E50; color: #ECF0F1; font-family: monospace; border: 1px solid #34495E; }"
+        );
     mainLayout->addWidget(resultText);
 
-    // Tree visualizer in scroll area
+    // ---------- Tree visualizer ----------
     scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
-    scrollArea->setMinimumHeight(250);
-    scrollArea->setStyleSheet("QScrollArea { border: 2px solid #BDC3C7; border-radius: 5px; }");
-    
+    scrollArea->setMinimumHeight(300);
+    scrollArea->setStyleSheet("QScrollArea { border: 1px solid #34495E; }");
+
     treeVisualizer = new TreeVisualizer(nullptr, "", this);
     scrollArea->setWidget(treeVisualizer);
     mainLayout->addWidget(scrollArea);
 
-    // Back button
+    // ---------- Back button ----------
     backButton = new QPushButton("Back to Main Menu", this);
-    backButton->setMinimumHeight(40);
     backButton->setStyleSheet(
-        "QPushButton {"
-        "   background-color: #95A5A6;"
-        "   color: white;"
-        "   font-size: 14px;"
-        "   font-weight: bold;"
-        "   border-radius: 5px;"
-        "}"
+        "QPushButton { background-color: #95A5A6; color: white; font-weight: bold; border-radius: 5px; padding: 5px; }"
         "QPushButton:hover { background-color: #7F8C8D; }"
-    );
+        );
     connect(backButton, &QPushButton::clicked, this, &MutationWindow::goBack);
-    mainLayout->addWidget(backButton);
+    mainLayout->addWidget(backButton, 0, Qt::AlignRight);
 }
 
 void MutationWindow::buildTree() {
@@ -127,14 +105,14 @@ void MutationWindow::buildTree() {
     }
 
     if (tree) delete tree;
-    
+
     try {
         tree = new SuffixTree(text.toStdString());
         treeVisualizer->setTree(tree->getRoot(), tree->getText());
-        
+
         sampleInput->setEnabled(true);
         detectButton->setEnabled(true);
-        resultText->setText("Reference tree built successfully! You can now enter a sample sequence for mutation detection.");
+        resultText->setText("Reference tree built successfully! Enter a sample DNA to detect mutations.");
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString("Failed to build tree: %1").arg(e.what()));
     }
@@ -155,17 +133,15 @@ void MutationWindow::detectMutations() {
     // Capture cout output
     std::stringstream buffer;
     std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
-    
-    tree->detectDNAMutationss(sample.toStdString());
-    
+
+    tree->detectDNAMutationss(sample.toStdString());  // ensure this prints to std::cout
+
     std::cout.rdbuf(old);
-    
+
     resultText->setText(QString::fromStdString(buffer.str()));
 }
 
 void MutationWindow::goBack() {
-    if (parentWindow) {
-        parentWindow->show();
-    }
+    if (parentWindow) parentWindow->show();
     this->close();
 }
