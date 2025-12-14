@@ -61,28 +61,45 @@ void MainWindow::setupUI() {
 }
 
 void MainWindow::openSearchWindow() {
-    auto *w = new SearchWindow(this);
+    SearchWindow *w = new SearchWindow();
     w->setAttribute(Qt::WA_DeleteOnClose);
+
+    connect(w, &QWidget::destroyed, this, &QWidget::show);
+
+    this->hide();
     w->show();
 }
 
 void MainWindow::openMutationWindow() {
-    auto *w = new MutationWindow(this);
+    MutationWindow *w = new MutationWindow();
     w->setAttribute(Qt::WA_DeleteOnClose);
+
+    connect(w, &QWidget::destroyed, this, &QWidget::show);
+
+    this->hide();
     w->show();
 }
 
 void MainWindow::openPatternWindow() {
-    auto *w = new PatternWindow(this);
+    PatternWindow *w = new PatternWindow();
     w->setAttribute(Qt::WA_DeleteOnClose);
+
+    connect(w, &QWidget::destroyed, this, &QWidget::show);
+
+    this->hide();
     w->show();
 }
 
 void MainWindow::openPredictionWindow() {
-    auto *w = new PredictionWindow(this);
+    PredictionWindow *w = new PredictionWindow();
     w->setAttribute(Qt::WA_DeleteOnClose);
+
+    connect(w, &QWidget::destroyed, this, &QWidget::show);
+
+    this->hide();
     w->show();
 }
+
 
 void MainWindow::exitApplication() {
     QApplication::quit();
