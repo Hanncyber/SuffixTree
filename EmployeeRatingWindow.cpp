@@ -435,6 +435,9 @@ void EmployeeRatingWindow::buildHierarchy() {
     // Enable query inputs
     enableQueryInputs(true);
     
+    // Update tree visualization after building
+    updateTreeVisualization();
+    
     resultText->append("\n✓ Hierarchy tree built successfully!");
     resultText->append("You can now perform updates (Type 0) and queries (Type 1).");
 }
