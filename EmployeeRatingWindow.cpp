@@ -411,7 +411,7 @@ void EmployeeRatingWindow::setEmployeeRating() {
     empRating->setInitialRating(employee, rating);
     
     // Update tree visualization with new rating
-    treeVisualizer->updateEmployeeData(empRating->getRating());
+    updateTreeVisualization();
     
     resultText->append(QString("✓ Set rating of %1 to %2")
                       .arg(empStr)
@@ -464,7 +464,7 @@ void EmployeeRatingWindow::performUpdate() {
     empRating->updateSubtree(employee, value);
     
     // Update tree visualization with new ratings
-    treeVisualizer->updateEmployeeData(empRating->getRating());
+    updateTreeVisualization();
     
     resultText->append(QString("\n✓ Type 0 Query: Updated ratings of %1 and all subordinates by %2")
                       .arg(empStr)
