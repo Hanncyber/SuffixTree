@@ -19,6 +19,7 @@ private slots:
     void openMutationWindow();
     void openPatternWindow();
     void openPredictionWindow();
+    void openEmployeeRatingWindow();
     void exitApplication();
 
 private:
@@ -30,6 +31,7 @@ private:
     QPushButton *mutationButton;
     QPushButton *patternButton;
     QPushButton *predictionButton;
+    QPushButton *employeeRatingButton;
     QPushButton *exitButton;
 };
 
