@@ -4,6 +4,10 @@
 
 using namespace std;
 
+// Constants for employee limits
+const int MIN_EMPLOYEES = 1;
+const int MAX_EMPLOYEES = 26;
+
 /**
  * Example program demonstrating the Employee Rating System
  * 
@@ -20,9 +24,14 @@ void printSeparator() {
     cout << "\n========================================\n";
 }
 
-void printExample1() {
-    cout << "EXAMPLE 1: Simple Company Hierarchy\n";
+void printExampleHeader(const string& title) {
     printSeparator();
+    cout << "\n" << title << "\n";
+    printSeparator();
+}
+
+void printExample1() {
+    printExampleHeader("EXAMPLE 1: Simple Company Hierarchy");
     
     // Company with 5 employees: H (head), A, B, C, D
     EmployeeRating company(5);
@@ -83,9 +92,7 @@ void printExample1() {
 }
 
 void printExample2() {
-    printSeparator();
-    cout << "\nEXAMPLE 2: Magazine Publishing Scenario\n";
-    printSeparator();
+    printExampleHeader("EXAMPLE 2: Magazine Publishing Scenario");
     
     // Simulating Murphy's magazine scenario with 6 employees
     EmployeeRating company(6);
@@ -147,16 +154,15 @@ void printExample2() {
 }
 
 void interactiveMode() {
-    printSeparator();
-    cout << "\nINTERACTIVE MODE\n";
-    printSeparator();
+    printExampleHeader("INTERACTIVE MODE");
     
     int n;
     cout << "Enter number of employees (including head H): ";
     cin >> n;
     
-    if (n < 1 || n > 26) {
-        cout << "Error: Number of employees must be between 1 and 26\n";
+    if (n < MIN_EMPLOYEES || n > MAX_EMPLOYEES) {
+        cout << "Error: Number of employees must be between " 
+             << MIN_EMPLOYEES << " and " << MAX_EMPLOYEES << "\n";
         return;
     }
     

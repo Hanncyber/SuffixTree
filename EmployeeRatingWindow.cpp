@@ -281,6 +281,10 @@ void EmployeeRatingWindow::enableQueryInputs(bool enable) {
     queryButton->setEnabled(enable);
 }
 
+bool EmployeeRatingWindow::isValidEmployeeChar(char c) {
+    return (c == 'H' || (c >= 'A' && c < 'A' + numEmployees - 1));
+}
+
 void EmployeeRatingWindow::addSubordinateToHierarchy() {
     if (!isInitialized) {
         QMessageBox::warning(this, "Error", "Please initialize the company first.");
@@ -299,11 +303,11 @@ void EmployeeRatingWindow::addSubordinateToHierarchy() {
     char subordinate = subordinateStr[0].toLatin1();
     
     // Validate characters
-    if (manager != 'H' && (manager < 'A' || manager >= 'A' + numEmployees - 1)) {
+    if (!isValidEmployeeChar(manager)) {
         QMessageBox::warning(this, "Error", "Invalid manager character.");
         return;
     }
-    if (subordinate != 'H' && (subordinate < 'A' || subordinate >= 'A' + numEmployees - 1)) {
+    if (!isValidEmployeeChar(subordinate)) {
         QMessageBox::warning(this, "Error", "Invalid subordinate character.");
         return;
     }
@@ -335,7 +339,7 @@ void EmployeeRatingWindow::setEmployeeRating() {
     int rating = ratingValueInput->value();
     
     // Validate character
-    if (employee != 'H' && (employee < 'A' || employee >= 'A' + numEmployees - 1)) {
+    if (!isValidEmployeeChar(employee)) {
         QMessageBox::warning(this, "Error", "Invalid employee character.");
         return;
     }
@@ -385,7 +389,7 @@ void EmployeeRatingWindow::performUpdate() {
     int value = updateValueInput->value();
     
     // Validate character
-    if (employee != 'H' && (employee < 'A' || employee >= 'A' + numEmployees - 1)) {
+    if (!isValidEmployeeChar(employee)) {
         QMessageBox::warning(this, "Error", "Invalid employee character.");
         return;
     }
@@ -415,7 +419,7 @@ void EmployeeRatingWindow::performQuery() {
     char employee = empStr[0].toLatin1();
     
     // Validate character
-    if (employee != 'H' && (employee < 'A' || employee >= 'A' + numEmployees - 1)) {
+    if (!isValidEmployeeChar(employee)) {
         QMessageBox::warning(this, "Error", "Invalid employee character.");
         return;
     }

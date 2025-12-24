@@ -30,6 +30,7 @@ private:
     void setupUI();
     void enableHierarchyInputs(bool enable);
     void enableQueryInputs(bool enable);
+    bool isValidEmployeeChar(char c);
     
     QVBoxLayout *mainLayout;
     QLabel *titleLabel;
