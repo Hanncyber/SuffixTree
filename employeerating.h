@@ -46,6 +46,12 @@ public:
 
     // Type 1: query performance of employee
     int queryPerformance(char employee);
+
+    // Getters for tree visualization
+    int getNumEmployees() const { return n; }
+    int** getTree() const { return tree; }
+    int* getChildCount() const { return childCount; }
+    int* getRating() const { return rating; }
 };
 
 #endif

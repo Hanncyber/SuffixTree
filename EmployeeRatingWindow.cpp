@@ -226,8 +226,17 @@ void EmployeeRatingWindow::setupUI() {
     resultText->setStyleSheet(
         "QTextEdit { font-size: 13px; background-color: #2C3E50; color: #ECF0F1; border: 1px solid #34495E; }"
         );
-    resultText->setMaximumHeight(150);
+    resultText->setMaximumHeight(100);
     mainLayout->addWidget(resultText);
+
+    // ---------- Tree visualizer ----------
+    scrollArea = new QScrollArea(this);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setMinimumHeight(350);
+    scrollArea->setStyleSheet("QScrollArea { border: 1px solid #34495E; }");
+    treeVisualizer = new EmployeeTreeVisualizer(this);
+    scrollArea->setWidget(treeVisualizer);
+    mainLayout->addWidget(scrollArea);
 
     // ---------- Back button ----------
     backButton = new QPushButton("Back to Main Menu", this);
@@ -256,6 +265,12 @@ void EmployeeRatingWindow::initializeCompany() {
     // Disable initialization controls
     numEmployeesInput->setEnabled(false);
     initButton->setEnabled(false);
+    
+    // Update tree visualizer with initial data
+    treeVisualizer->setEmployeeData(empRating->getNumEmployees(), 
+                                     empRating->getTree(), 
+                                     empRating->getChildCount(), 
+                                     empRating->getRating());
     
     resultText->clear();
     resultText->append(QString("✓ Company initialized with %1 employees.").arg(numEmployees));
@@ -314,6 +329,12 @@ void EmployeeRatingWindow::addSubordinateToHierarchy() {
     
     empRating->addSubordinate(manager, subordinate);
     
+    // Update tree visualization
+    treeVisualizer->setEmployeeData(empRating->getNumEmployees(), 
+                                     empRating->getTree(), 
+                                     empRating->getChildCount(), 
+                                     empRating->getRating());
+    
     resultText->append(QString("✓ Added %1 as subordinate of %2")
                       .arg(subordinateStr)
                       .arg(managerStr));
@@ -345,6 +366,9 @@ void EmployeeRatingWindow::setEmployeeRating() {
     }
     
     empRating->setInitialRating(employee, rating);
+    
+    // Update tree visualization with new rating
+    treeVisualizer->updateEmployeeData(empRating->getRating());
     
     resultText->append(QString("✓ Set rating of %1 to %2")
                       .arg(empStr)
@@ -395,6 +419,9 @@ void EmployeeRatingWindow::performUpdate() {
     }
     
     empRating->updateSubtree(employee, value);
+    
+    // Update tree visualization with new ratings
+    treeVisualizer->updateEmployeeData(empRating->getRating());
     
     resultText->append(QString("\n✓ Type 0 Query: Updated ratings of %1 and all subordinates by %2")
                       .arg(empStr)

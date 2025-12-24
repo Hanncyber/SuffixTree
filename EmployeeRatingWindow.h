@@ -8,7 +8,9 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QSpinBox>
+#include <QScrollArea>
 #include "employeerating.h"
+#include "EmployeeTreeVisualizer.h"
 
 class EmployeeRatingWindow : public QWidget {
     Q_OBJECT
@@ -61,6 +63,10 @@ private:
     // Results
     QTextEdit *resultText;
     QPushButton *backButton;
+    
+    // Tree visualization
+    QScrollArea *scrollArea;
+    EmployeeTreeVisualizer *treeVisualizer;
     
     EmployeeRating *empRating;
     int numEmployees;

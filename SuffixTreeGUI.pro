@@ -15,7 +15,8 @@ SOURCES += \
     TreeVisualizer.cpp \
     SuffixTree.cpp \
     employeerating.cpp \
-    EmployeeRatingWindow.cpp
+    EmployeeRatingWindow.cpp \
+    EmployeeTreeVisualizer.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -26,4 +27,5 @@ HEADERS += \
     TreeVisualizer.h \
     SuffixTree.h \
     employeerating.h \
-    EmployeeRatingWindow.h
+    EmployeeRatingWindow.h \
+    EmployeeTreeVisualizer.h
