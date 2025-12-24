@@ -25,6 +25,18 @@ EmployeeTreeVisualizer::EmployeeTreeVisualizer(QWidget *parent)
 
 // ----------------- Update employee data -----------------
 void EmployeeTreeVisualizer::setEmployeeData(int numEmployees, int* const* tree, const int* childCount, const int* rating) {
+    // Validate input parameters
+    if (numEmployees <= 0 || !tree || !childCount || !rating) {
+        // Invalid data, clear everything
+        this->numEmployees = 0;
+        this->employeeTree = nullptr;
+        this->childCount = nullptr;
+        this->employeeRating = nullptr;
+        nodePositions.clear();
+        update();
+        return;
+    }
+    
     this->numEmployees = numEmployees;
     this->employeeTree = tree;
     this->childCount = childCount;
@@ -79,8 +91,19 @@ int EmployeeTreeVisualizer::calculateSubtreePositions(int employeeIndex, int xOf
     if (!employeeTree || !childCount || !employeeRating) return 0;
 
     std::vector<int> children;
-    for (int i = 0; i < childCount[employeeIndex]; ++i) {
-        children.push_back(employeeTree[employeeIndex][i]);
+    int numChildren = childCount[employeeIndex];
+    
+    // Validate childCount is reasonable
+    if (numChildren < 0 || numChildren >= numEmployees) {
+        return MIN_HORIZONTAL_SPACING; // Invalid child count, treat as leaf
+    }
+    
+    for (int i = 0; i < numChildren; ++i) {
+        int childIndex = employeeTree[employeeIndex][i];
+        // Validate child index before adding
+        if (childIndex >= 0 && childIndex < numEmployees) {
+            children.push_back(childIndex);
+        }
     }
 
     int subtreeWidth = 0;
@@ -99,7 +122,7 @@ int EmployeeTreeVisualizer::calculateSubtreePositions(int employeeIndex, int xOf
             40 + depth * VERTICAL_SPACING,
             employeeIndex,
             indexToChar(employeeIndex),
-            employeeRating ? employeeRating[employeeIndex] : 0
+            employeeRating[employeeIndex]
         };
     } else {
         int parentX = childCenters.front() + (childCenters.back() - childCenters.front()) / 2;
@@ -108,7 +131,7 @@ int EmployeeTreeVisualizer::calculateSubtreePositions(int employeeIndex, int xOf
             40 + depth * VERTICAL_SPACING,
             employeeIndex,
             indexToChar(employeeIndex),
-            employeeRating ? employeeRating[employeeIndex] : 0
+            employeeRating[employeeIndex]
         };
         
         for (int child : children) {

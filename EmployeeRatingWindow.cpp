@@ -338,11 +338,17 @@ bool EmployeeRatingWindow::isValidEmployeeChar(char c) {
 }
 
 void EmployeeRatingWindow::updateTreeVisualization() {
-    if (empRating && isInitialized) {
-        treeVisualizer->setEmployeeData(empRating->getNumEmployees(), 
-                                         empRating->getTree(), 
-                                         empRating->getChildCount(), 
-                                         empRating->getRating());
+    if (empRating && isInitialized && treeVisualizer) {
+        // Get data from empRating
+        int numEmps = empRating->getNumEmployees();
+        int* const* treeData = empRating->getTree();
+        const int* childCountData = empRating->getChildCount();
+        const int* ratingData = empRating->getRating();
+        
+        // Validate pointers before passing to visualizer
+        if (treeData && childCountData && ratingData && numEmps > 0) {
+            treeVisualizer->setEmployeeData(numEmps, treeData, childCountData, ratingData);
+        }
     }
 }
 
