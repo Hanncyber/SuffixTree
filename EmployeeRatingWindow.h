@@ -8,7 +8,9 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QSpinBox>
+#include <QScrollArea>
 #include "employeerating.h"
+#include "EmployeeTreeVisualizer.h"
 
 class EmployeeRatingWindow : public QWidget {
     Q_OBJECT
@@ -31,6 +33,7 @@ private:
     void enableHierarchyInputs(bool enable);
     void enableQueryInputs(bool enable);
     bool isValidEmployeeChar(char c);
+    void updateTreeVisualization();
     
     QVBoxLayout *mainLayout;
     QLabel *titleLabel;
@@ -61,6 +64,10 @@ private:
     // Results
     QTextEdit *resultText;
     QPushButton *backButton;
+    
+    // Tree visualization
+    QScrollArea *scrollArea;
+    EmployeeTreeVisualizer *treeVisualizer;
     
     EmployeeRating *empRating;
     int numEmployees;
