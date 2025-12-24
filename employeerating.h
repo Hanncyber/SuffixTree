@@ -35,7 +35,8 @@ public:
     ~EmployeeRating();
 
     // Add subordinate: manager and employee as characters
-    void addSubordinate(char manager, char employee);
+    // Returns empty string on success, error message on failure
+    string addSubordinate(char manager, char employee);
 
     // Set initial rating using character
     void setInitialRating(char employee, int value);

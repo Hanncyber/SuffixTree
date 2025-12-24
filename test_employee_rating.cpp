@@ -180,7 +180,10 @@ void interactiveMode() {
         char manager, subordinate;
         cout << "  " << (i+1) << ". Manager Subordinate: ";
         cin >> manager >> subordinate;
-        company.addSubordinate(manager, subordinate);
+        string errorMsg = company.addSubordinate(manager, subordinate);
+        if (!errorMsg.empty()) {
+            cout << "  Error: " << errorMsg << "\n";
+        }
     }
     
     cout << "\nSet initial ratings for each employee:\n";

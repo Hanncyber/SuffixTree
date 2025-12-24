@@ -379,7 +379,13 @@ void EmployeeRatingWindow::addSubordinateToHierarchy() {
         return;
     }
     
-    empRating->addSubordinate(manager, subordinate);
+    std::string errorMsg = empRating->addSubordinate(manager, subordinate);
+    
+    // Check if there was an error
+    if (!errorMsg.empty()) {
+        QMessageBox::warning(this, "Error", QString::fromStdString(errorMsg));
+        return;
+    }
     
     // Update tree visualization
     updateTreeVisualization();
