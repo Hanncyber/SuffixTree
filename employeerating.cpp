@@ -1,6 +1,5 @@
 #include "employeerating.h"
 #include "SuffixTree.h"
-#include <iostream>
 
 EmployeeRating::EmployeeRating(int n) {
     this->n = n;
@@ -64,29 +63,27 @@ EmployeeRating::~EmployeeRating() {
     if (suffixTree) delete suffixTree;
 }
 
-void EmployeeRating::addSubordinate(char manager, char employee) {
+string EmployeeRating::addSubordinate(char manager, char employee) {
     int m = charToIndex(manager);
     int e = charToIndex(employee);
 
     if (e == 0) {
-        std::cerr << "Error: Root employee H cannot have a manager.\n";
-        return;
+        return "Root employee H cannot have a manager.";
     }
 
     if (parent[e] != -1) {
-        std::cerr << "Error: Employee already has a manager.\n";
-        return;
+        return "Employee already has a manager.";
     }
 
     if (m == e) {
-        std::cerr << "Error: Employee cannot manage themselves.\n";
-        return;
+        return "Employee cannot manage themselves.";
     }
 
     parent[e] = m;
 
 
     tree[m][childCount[m]++] = e;
+    return "";  // Empty string means success
 }
 
 // ------------------- Set initial rating -------------------
