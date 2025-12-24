@@ -22,6 +22,10 @@ EmployeeRating::EmployeeRating(int n) {
         tin[i] = 0;
         tout[i] = 0;
     }
+    parent = new int[n];
+    for (int i = 0; i < n; i++) {
+        parent[i] = -1;
+    }
 
     dfsString = "";            // DFS-linearized sequence not built yet
     suffixTree = nullptr;      // suffix tree will be built later
@@ -37,6 +41,7 @@ EmployeeRating::EmployeeRating() {
 
     tree = nullptr;
     childCount = nullptr;
+    parent = nullptr;
 
     dfsString = "";
     suffixTree = nullptr;
@@ -48,7 +53,7 @@ EmployeeRating::~EmployeeRating() {
     if (tout) delete[] tout;
 
     if (childCount) delete[] childCount;
-
+    if (parent) delete[] parent;
     if (tree) {
         for (int i = 0; i < n; i++) {
             if (tree[i]) delete[] tree[i];
@@ -60,12 +65,28 @@ EmployeeRating::~EmployeeRating() {
 }
 
 void EmployeeRating::addSubordinate(char manager, char employee) {
-    int m = charToIndex(manager);   // map manager to internal index
-    int e = charToIndex(employee);  // map employee to internal index
+    int m = charToIndex(manager);
+    int e = charToIndex(employee);
 
-    // Add employee to manager's list
-    tree[m][childCount[m]] = e;
-    childCount[m]++;
+    if (e == 0) {
+        std::cerr << "Error: Root employee H cannot have a manager.\n";
+        return;
+    }
+
+    if (parent[e] != -1) {
+        std::cerr << "Error: Employee already has a manager.\n";
+        return;
+    }
+
+    if (m == e) {
+        std::cerr << "Error: Employee cannot manage themselves.\n";
+        return;
+    }
+
+    parent[e] = m;
+
+
+    tree[m][childCount[m]++] = e;
 }
 
 // ------------------- Set initial rating -------------------

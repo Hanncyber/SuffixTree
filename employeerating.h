@@ -15,6 +15,8 @@ private:
 
     int** tree;         // adjacency list (children per employee)
     int* childCount;
+    int* parent;
+
 
     string dfsString; // DFS-linearized rating string
     SuffixTree* suffixTree;
