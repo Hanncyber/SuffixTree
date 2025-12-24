@@ -39,7 +39,12 @@ make cli
 make gui
 ```
 
-**Build both:**
+**Build Employee Rating test program:**
+```bash
+make test-emp
+```
+
+**Build all:**
 ```bash
 make all
 ```
@@ -63,6 +68,21 @@ The CLI provides an interactive menu to:
 ### GUI Version
 ```bash
 make run-gui
+# or
+./SuffixTreeGUI
+```
+
+### Employee Rating Test Program
+```bash
+make run-test-emp
+# or
+./test_employee_rating
+```
+
+The test program demonstrates:
+- Two comprehensive examples with step-by-step explanations
+- Interactive mode to build custom hierarchies
+- Type 0 (update) and Type 1 (query) operations
 # or
 ./SuffixTreeGUI
 ```
@@ -200,11 +220,18 @@ A standalone test program is included to demonstrate the employee rating feature
 
 **Build:**
 ```bash
+make test-emp
+```
+
+Or manually:
+```bash
 g++ -std=c++11 -o test_employee_rating test_employee_rating.cpp employeerating.cpp SuffixTree.cpp
 ```
 
 **Run:**
 ```bash
+make run-test-emp
+# or
 ./test_employee_rating
 ```
 

@@ -12,6 +12,7 @@ moc_predefs.h
 # Executables
 suffix_tree_cli
 SuffixTreeGUI
+test_employee_rating
 
 # Build directories
 build/
