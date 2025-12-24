@@ -3,6 +3,7 @@
 #include "MutationWindow.h"
 #include "PatternWindow.h"
 #include "PredictionWindow.h"
+#include "EmployeeRatingWindow.h"
 #include <QFont>
 #include <QApplication>
 
@@ -38,6 +39,7 @@ void MainWindow::setupUI() {
         { "Search Pattern", "#3498DB", [this]() { openSearchWindow(); } },
         { "Longest Repeated Pattern", "#F39C12", [this]() { openPatternWindow(); } },
         { "Predict Completions", "#2ECC71", [this]() { openPredictionWindow(); } },
+        { "Employee Rating System", "#9B59B6", [this]() { openEmployeeRatingWindow(); } },
         { "Exit", "#95A5A6", [this]() { exitApplication(); } }
     };
 
@@ -93,6 +95,14 @@ void MainWindow::openPatternWindow() {
 
 void MainWindow::openPredictionWindow() {
     PredictionWindow *w = new PredictionWindow();
+    w->setAttribute(Qt::WA_DeleteOnClose);
+    connect(w, &QWidget::destroyed, this, &QWidget::show);
+    hide();
+    w->show();
+}
+
+void MainWindow::openEmployeeRatingWindow() {
+    EmployeeRatingWindow *w = new EmployeeRatingWindow();
     w->setAttribute(Qt::WA_DeleteOnClose);
     connect(w, &QWidget::destroyed, this, &QWidget::show);
     hide();

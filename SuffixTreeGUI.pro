@@ -13,7 +13,9 @@ SOURCES += \
     PatternWindow.cpp \
     PredictionWindow.cpp \
     TreeVisualizer.cpp \
-    SuffixTree.cpp
+    SuffixTree.cpp \
+    employeerating.cpp \
+    EmployeeRatingWindow.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -22,4 +24,6 @@ HEADERS += \
     PatternWindow.h \
     PredictionWindow.h \
     TreeVisualizer.h \
-    SuffixTree.h
+    SuffixTree.h \
+    employeerating.h \
+    EmployeeRatingWindow.h

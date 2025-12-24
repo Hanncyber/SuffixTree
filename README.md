@@ -4,11 +4,12 @@ A comprehensive suffix tree implementation with both CLI and GUI interfaces, fea
 
 ## Features
 
-The application supports four main operations:
+The application supports five main operations:
 1. **Search Pattern** - Find all occurrences of a pattern in text
 2. **DNA Mutation Detection** - Detect mutations in DNA sequences
 3. **Longest Repeated Pattern** - Find the longest repeated substring
 4. **Predict Completions** - Auto-complete suggestions based on prefix
+5. **Employee Rating System** - Manage company hierarchies and calculate employee performance (GCD)
 
 ## Building the Application
 
@@ -38,7 +39,12 @@ make cli
 make gui
 ```
 
-**Build both:**
+**Build Employee Rating test program:**
+```bash
+make test-emp
+```
+
+**Build all:**
 ```bash
 make all
 ```
@@ -66,14 +72,30 @@ make run-gui
 ./SuffixTreeGUI
 ```
 
+### Employee Rating Test Program
+```bash
+make run-test-emp
+# or
+./test_employee_rating
+```
+
+The test program demonstrates:
+- Two comprehensive examples with step-by-step explanations
+- Interactive mode to build custom hierarchies
+- Type 0 (update) and Type 1 (query) operations
+# or
+./SuffixTreeGUI
+```
+
 ## GUI Usage Guide
 
 ### Main Window
-The main window displays four colorful buttons for each feature:
+The main window displays five colorful buttons for each feature:
 - **Search Pattern** (Blue) - Search for patterns in text
 - **DNA Mutation Detection** (Red) - Compare reference and sample DNA
 - **Longest Repeated Pattern** (Green) - Find repeated substrings
 - **Predict Completions** (Orange) - Get auto-complete suggestions
+- **Employee Rating System** (Purple) - Manage employee hierarchies and performance
 
 ### Search Pattern Window
 1. Enter text to build the suffix tree
@@ -118,6 +140,27 @@ The main window displays four colorful buttons for each feature:
 6. Click "Predict Completions"
 7. View auto-complete suggestions
 
+### Employee Rating System Window
+1. Enter number of employees (including head H)
+2. Click "Initialize" to create company structure
+3. Add subordinate relationships (e.g., H -> A, H -> B)
+4. Set initial ratings for each employee
+5. Click "Build Hierarchy Tree"
+6. Perform operations:
+   - **Type 0**: Update employee and all subordinates by a value
+   - **Type 1**: Query performance (GCD) of employee's subtree
+7. View results showing GCD calculations
+
+**Example:**
+- Company: 5 employees (H, A, B, C, D)
+- Hierarchy: H->A, H->B, A->C, A->D
+- Ratings: H=12, A=18, B=24, C=6, D=30
+- Query H performance: GCD(12,18,24,6,30) = 6
+- Update A by +6: A=24, C=12, D=36
+- Query H performance: GCD(12,24,24,12,36) = 12
+
+For detailed usage, see [EMPLOYEE_RATING_GUIDE.md](EMPLOYEE_RATING_GUIDE.md)
+
 ## Tree Visualization
 
 Each window includes a **colorful, interactive tree visualization**:
@@ -157,16 +200,45 @@ Each window includes a **colorful, interactive tree visualization**:
 
 ### Code Structure
 ```
-SuffixTree.h/cpp          - Core suffix tree implementation
-MainWindow.h/cpp          - Main menu window
-SearchWindow.h/cpp        - Pattern search interface
-MutationWindow.h/cpp      - DNA mutation detection
-PatternWindow.h/cpp       - Longest repeated pattern
-PredictionWindow.h/cpp    - Auto-complete predictions
-TreeVisualizer.h/cpp      - Tree visualization widget
-main_gui.cpp              - GUI entry point
-main.cpp                  - CLI entry point
+SuffixTree.h/cpp             - Core suffix tree implementation
+MainWindow.h/cpp             - Main menu window
+SearchWindow.h/cpp           - Pattern search interface
+MutationWindow.h/cpp         - DNA mutation detection
+PatternWindow.h/cpp          - Longest repeated pattern
+PredictionWindow.h/cpp       - Auto-complete predictions
+EmployeeRatingWindow.h/cpp   - Employee rating system interface
+TreeVisualizer.h/cpp         - Tree visualization widget
+employeerating.h/cpp         - Employee rating logic
+main_gui.cpp                 - GUI entry point
+main.cpp                     - CLI entry point
+test_employee_rating.cpp     - Employee rating test program
 ```
+
+## Testing Employee Rating System
+
+A standalone test program is included to demonstrate the employee rating feature:
+
+**Build:**
+```bash
+make test-emp
+```
+
+Or manually:
+```bash
+g++ -std=c++11 -o test_employee_rating test_employee_rating.cpp employeerating.cpp SuffixTree.cpp
+```
+
+**Run:**
+```bash
+make run-test-emp
+# or
+./test_employee_rating
+```
+
+The test program includes:
+- Two comprehensive examples with explanations
+- Interactive mode to create custom hierarchies
+- Step-by-step demonstration of Type 0 (update) and Type 1 (query) operations
 
 ## Cleaning Up
 
@@ -215,6 +287,24 @@ Result: "abcabc" (length 6)
 Text: "hello world, hello there, help me"
 Prefix: "hel"
 Results: "hello world", "hello there", "help me"
+```
+
+### Example 5: Employee Rating
+```
+Company: 5 employees (H, A, B, C, D)
+Hierarchy:
+       H
+      / \
+     A   B
+    / \
+   C   D
+
+Initial Ratings: H=12, A=18, B=24, C=6, D=30
+Query H: GCD(12,18,24,6,30) = 6
+
+Update A by +6: (A=24, C=12, D=36)
+Query H: GCD(12,24,24,12,36) = 12
+Query A: GCD(24,12,36) = 12
 ```
 
 ## Requirements Met
