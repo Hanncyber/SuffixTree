@@ -141,15 +141,31 @@ The main window displays five colorful buttons for each feature:
 7. View auto-complete suggestions
 
 ### Employee Rating System Window
-1. Enter number of employees (including head H)
-2. Click "Initialize" to create company structure
-3. Add subordinate relationships (e.g., H -> A, H -> B)
-4. Set initial ratings for each employee
-5. Click "Build Hierarchy Tree"
-6. Perform operations:
-   - **Type 0**: Update employee and all subordinates by a value
-   - **Type 1**: Query performance (GCD) of employee's subtree
-7. View results showing GCD calculations
+
+**NEW: Tabbed Interface for Better Visualization!**
+
+The Employee Rating System now features a **tabbed layout** with two dedicated tabs:
+- **Controls Tab**: All input fields, buttons, and results
+- **Tree Visualization Tab**: Dedicated space for the employee hierarchy tree (94% more space!)
+
+**Usage:**
+1. **Controls Tab** (default):
+   - Enter number of employees (including head H)
+   - Click "Initialize" to create company structure
+   - Add subordinate relationships (e.g., H -> A, H -> B)
+   - Set initial ratings for each employee
+   - Click "Build Hierarchy Tree"
+   - Perform operations:
+     - **Type 0**: Update employee and all subordinates by a value
+     - **Type 1**: Query performance (GCD) of employee's subtree
+   - View results showing GCD calculations
+
+2. **Tree Visualization Tab**:
+   - Click the "Tree Visualization" tab to switch
+   - View the employee hierarchy tree with full vertical space
+   - See employee nodes with their ratings
+   - Visualize relationships between employees
+   - Switch back to Controls tab to perform more operations
 
 **Example:**
 - Company: 5 employees (H, A, B, C, D)
@@ -159,7 +175,8 @@ The main window displays five colorful buttons for each feature:
 - Update A by +6: A=24, C=12, D=36
 - Query H performance: GCD(12,24,24,12,36) = 12
 
-For detailed usage, see [EMPLOYEE_RATING_GUIDE.md](EMPLOYEE_RATING_GUIDE.md)
+For detailed usage, see [EMPLOYEE_RATING_GUIDE.md](EMPLOYEE_RATING_GUIDE.md)  
+For tab layout details, see [TAB_LAYOUT_CHANGES.md](TAB_LAYOUT_CHANGES.md)
 
 ## Tree Visualization
 
