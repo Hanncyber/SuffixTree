@@ -1,6 +1,5 @@
 #include "employeerating.h"
 #include "SuffixTree.h"
-#include "SuffixTree.cpp"
 #include <iostream>
 
 EmployeeRating::EmployeeRating(int n) {
