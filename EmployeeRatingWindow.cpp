@@ -267,10 +267,7 @@ void EmployeeRatingWindow::initializeCompany() {
     initButton->setEnabled(false);
     
     // Update tree visualizer with initial data
-    treeVisualizer->setEmployeeData(empRating->getNumEmployees(), 
-                                     empRating->getTree(), 
-                                     empRating->getChildCount(), 
-                                     empRating->getRating());
+    updateTreeVisualization();
     
     resultText->clear();
     resultText->append(QString("✓ Company initialized with %1 employees.").arg(numEmployees));
@@ -298,6 +295,15 @@ void EmployeeRatingWindow::enableQueryInputs(bool enable) {
 
 bool EmployeeRatingWindow::isValidEmployeeChar(char c) {
     return (c == 'H' || (c >= 'A' && c < 'A' + numEmployees - 1));
+}
+
+void EmployeeRatingWindow::updateTreeVisualization() {
+    if (empRating && isInitialized) {
+        treeVisualizer->setEmployeeData(empRating->getNumEmployees(), 
+                                         empRating->getTree(), 
+                                         empRating->getChildCount(), 
+                                         empRating->getRating());
+    }
 }
 
 void EmployeeRatingWindow::addSubordinateToHierarchy() {
@@ -330,10 +336,7 @@ void EmployeeRatingWindow::addSubordinateToHierarchy() {
     empRating->addSubordinate(manager, subordinate);
     
     // Update tree visualization
-    treeVisualizer->setEmployeeData(empRating->getNumEmployees(), 
-                                     empRating->getTree(), 
-                                     empRating->getChildCount(), 
-                                     empRating->getRating());
+    updateTreeVisualization();
     
     resultText->append(QString("✓ Added %1 as subordinate of %2")
                       .arg(subordinateStr)

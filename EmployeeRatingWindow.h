@@ -33,6 +33,7 @@ private:
     void enableHierarchyInputs(bool enable);
     void enableQueryInputs(bool enable);
     bool isValidEmployeeChar(char c);
+    void updateTreeVisualization();
     
     QVBoxLayout *mainLayout;
     QLabel *titleLabel;

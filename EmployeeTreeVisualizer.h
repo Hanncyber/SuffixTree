@@ -19,8 +19,8 @@ class EmployeeTreeVisualizer : public QWidget {
 
 public:
     explicit EmployeeTreeVisualizer(QWidget *parent = nullptr);
-    void setEmployeeData(int numEmployees, int** tree, int* childCount, int* rating);
-    void updateEmployeeData(int* rating);
+    void setEmployeeData(int numEmployees, int* const* tree, const int* childCount, const int* rating);
+    void updateEmployeeData(const int* rating);
     void clear();
 
 protected:
@@ -35,9 +35,9 @@ private:
     char indexToChar(int index) const;
 
     int numEmployees;
-    int** employeeTree;
-    int* childCount;
-    int* employeeRating;
+    int* const* employeeTree;
+    const int* childCount;
+    const int* employeeRating;
     
     std::map<int, EmployeeNodePosition> nodePositions;
     int treeWidth;

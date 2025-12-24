@@ -24,7 +24,7 @@ EmployeeTreeVisualizer::EmployeeTreeVisualizer(QWidget *parent)
 }
 
 // ----------------- Update employee data -----------------
-void EmployeeTreeVisualizer::setEmployeeData(int numEmployees, int** tree, int* childCount, int* rating) {
+void EmployeeTreeVisualizer::setEmployeeData(int numEmployees, int* const* tree, const int* childCount, const int* rating) {
     this->numEmployees = numEmployees;
     this->employeeTree = tree;
     this->childCount = childCount;
@@ -34,7 +34,7 @@ void EmployeeTreeVisualizer::setEmployeeData(int numEmployees, int** tree, int* 
     update();
 }
 
-void EmployeeTreeVisualizer::updateEmployeeData(int* rating) {
+void EmployeeTreeVisualizer::updateEmployeeData(const int* rating) {
     this->employeeRating = rating;
     update();
 }
@@ -61,9 +61,12 @@ void EmployeeTreeVisualizer::calculatePositions() {
     // Start from root (employee index 0 = 'H')
     int totalWidth = calculateSubtreePositions(0, 0);
     
+    // Calculate center position based on total width (use a minimum width for small trees)
+    int centerX = std::max(400, totalWidth / 2);
+    
     // Shift tree to center
     for (auto& it : nodePositions) {
-        it.second.x += width() / 2 - totalWidth / 2;
+        it.second.x += centerX;
     }
     
     treeHeight = 600;
@@ -73,6 +76,7 @@ void EmployeeTreeVisualizer::calculatePositions() {
 // ----------------- Recursive layout -----------------
 int EmployeeTreeVisualizer::calculateSubtreePositions(int employeeIndex, int xOffset, int depth) {
     if (employeeIndex < 0 || employeeIndex >= numEmployees) return 0;
+    if (!employeeTree || !childCount || !employeeRating) return 0;
 
     std::vector<int> children;
     for (int i = 0; i < childCount[employeeIndex]; ++i) {
@@ -197,7 +201,9 @@ void EmployeeTreeVisualizer::drawEdge(QPainter& painter, int x1, int y1, int x2,
 
 // ----------------- Index to character -----------------
 char EmployeeTreeVisualizer::indexToChar(int index) const {
+    if (index < 0 || index >= numEmployees) return '?'; // Invalid index
     if (index == 0) return 'H';
+    if (index >= 27) return '?'; // Beyond 'Z', should not happen with valid employee counts
     return 'A' + index - 1;
 }
 
