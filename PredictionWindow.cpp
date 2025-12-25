@@ -67,6 +67,37 @@ void PredictionWindow::setupUI() {
     prefixLayout->addWidget(predictButton, 1);
     mainLayout->addLayout(prefixLayout);
 
+    // Parameters layout
+    QHBoxLayout *paramsLayout = new QHBoxLayout();
+    
+    QLabel *maxSuggestionsLabel = new QLabel("Max Suggestions:", this);
+    maxSuggestionsLabel->setStyleSheet("QLabel { font-size: 12px; }");
+    maxSuggestionsInput = new QSpinBox(this);
+    maxSuggestionsInput->setMinimum(1);
+    maxSuggestionsInput->setMaximum(50);
+    maxSuggestionsInput->setValue(10);
+    maxSuggestionsInput->setStyleSheet("QSpinBox { font-size: 12px; padding: 2px; }");
+    maxSuggestionsInput->setEnabled(false);
+    maxSuggestionsInput->setToolTip("Maximum number of word suggestions to display");
+    
+    QLabel *thresholdLabel = new QLabel("Occurrence Threshold:", this);
+    thresholdLabel->setStyleSheet("QLabel { font-size: 12px; }");
+    thresholdInput = new QSpinBox(this);
+    thresholdInput->setMinimum(1);
+    thresholdInput->setMaximum(1000);
+    thresholdInput->setValue(100);
+    thresholdInput->setStyleSheet("QSpinBox { font-size: 12px; padding: 2px; }");
+    thresholdInput->setEnabled(false);
+    thresholdInput->setToolTip("If prefix appears more than this many times, no suggestions will be shown");
+    
+    paramsLayout->addWidget(maxSuggestionsLabel);
+    paramsLayout->addWidget(maxSuggestionsInput);
+    paramsLayout->addSpacing(20);
+    paramsLayout->addWidget(thresholdLabel);
+    paramsLayout->addWidget(thresholdInput);
+    paramsLayout->addStretch();
+    mainLayout->addLayout(paramsLayout);
+
     // Result display
     resultText = new QTextEdit(this);
     resultText->setReadOnly(true);
@@ -110,6 +141,8 @@ void PredictionWindow::buildTree() {
         treeVisualizer->setTree(tree->getRoot(), tree->getText());
 
         prefixInput->setEnabled(true);
+        maxSuggestionsInput->setEnabled(true);
+        thresholdInput->setEnabled(true);
         predictButton->setEnabled(true);
         resultText->setText("Suffix tree built successfully! Enter a prefix to predict words.");
     } catch (const std::exception &e) {
@@ -129,11 +162,14 @@ void PredictionWindow::predictCompletions() {
         return;
     }
 
+    int maxSuggestions = maxSuggestionsInput->value();
+    int threshold = thresholdInput->value();
+
     // Redirect output to resultText
     std::stringstream buffer;
     std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
 
-    tree->predictCompletions(prefix.toStdString(), 10); // up to 10 suggestions
+    tree->predictCompletions(prefix.toStdString(), maxSuggestions, threshold);
 
     std::cout.rdbuf(old);
 
