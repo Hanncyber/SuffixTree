@@ -76,7 +76,7 @@ void PredictionWindow::setupUI() {
     maxSuggestionsInput = new QSpinBox(this);
     maxSuggestionsInput->setMinimum(1);
     maxSuggestionsInput->setMaximum(100);
-    maxSuggestionsInput->setValue(10);
+    maxSuggestionsInput->setValue(5);  // Match default in SuffixTree.h
     maxSuggestionsInput->setStyleSheet("QSpinBox { font-size: 12px; padding: 2px; }");
     maxSuggestionsInput->setEnabled(false);
     
