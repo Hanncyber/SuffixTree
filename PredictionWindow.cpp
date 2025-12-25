@@ -86,7 +86,7 @@ void PredictionWindow::setupUI() {
     freqThresholdInput = new QSpinBox(this);
     freqThresholdInput->setMinimum(1);
     freqThresholdInput->setMaximum(10000);
-    freqThresholdInput->setValue(100);
+    freqThresholdInput->setValue(100);  // Match default in SuffixTree.h
     freqThresholdInput->setToolTip("If prefix appears more than this many times, no suggestions will be shown");
     freqThresholdInput->setStyleSheet("QSpinBox { font-size: 12px; padding: 2px; }");
     freqThresholdInput->setEnabled(false);
