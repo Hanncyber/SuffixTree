@@ -88,7 +88,7 @@ void PredictionWindow::setupUI() {
     thresholdInput->setValue(100);
     thresholdInput->setStyleSheet("QSpinBox { font-size: 12px; padding: 2px; }");
     thresholdInput->setEnabled(false);
-    thresholdInput->setToolTip("If prefix appears more than this many times, no suggestions will be shown");
+    thresholdInput->setToolTip("Occurrence threshold - prefixes appearing more than this number of times will be filtered out");
     
     paramsLayout->addWidget(maxSuggestionsLabel);
     paramsLayout->addWidget(maxSuggestionsInput);
