@@ -345,9 +345,8 @@ void SuffixTree::predictCompletions(const string& query, int maxSuggestions, int
         int positions[1000];
         int count = 0;
         collectLeafIndices(cur, positions, count);
-
-        cout << "Prefix \"" << prefix << "\" → " << count << " predictions\n";
-
+        if (count <= no)
+            cout << "Prefix \"" << prefix << "\" → " << count << " predictions\n";
         // Record first valid prefix
         if (count <= no && answer == -1)
             answer = len;
