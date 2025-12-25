@@ -8,7 +8,7 @@
 PredictionWindow::PredictionWindow(QWidget *parent)
     : QWidget(parent), tree(nullptr), parentWindow(parent) {
     setupUI();
-    setWindowTitle("Predict Word Completions");
+    setWindowTitle("Google Text Prediction - Minimum Prefix Finder");
     resize(900, 700);
 }
 
@@ -22,9 +22,9 @@ void PredictionWindow::setupUI() {
     mainLayout->setContentsMargins(15, 15, 15, 15);
 
     // Title
-    QLabel *title = new QLabel("Word Prediction from Prefix", this);
+    QLabel *title = new QLabel("Google Text Prediction - Minimum Prefix Finder", this);
     QFont titleFont = title->font();
-    titleFont.setPointSize(20);
+    titleFont.setPointSize(18);
     titleFont.setBold(true);
     title->setFont(titleFont);
     title->setAlignment(Qt::AlignCenter);
@@ -47,10 +47,10 @@ void PredictionWindow::setupUI() {
     textLayout->addWidget(buildButton, 1);
     mainLayout->addLayout(textLayout);
 
-    // Prefix input layout
+    // Query input layout
     QHBoxLayout *prefixLayout = new QHBoxLayout();
     prefixInput = new QLineEdit(this);
-    prefixInput->setPlaceholderText("Enter prefix to predict...");
+    prefixInput->setPlaceholderText("Enter query string (must be substring of text)...");
     prefixInput->setStyleSheet("QLineEdit { font-size: 13px; padding: 4px; }");
     prefixInput->setEnabled(false);
 
@@ -70,29 +70,16 @@ void PredictionWindow::setupUI() {
     // Parameters layout
     QHBoxLayout *paramsLayout = new QHBoxLayout();
     
-    QLabel *maxSuggestionsLabel = new QLabel("Max Suggestions:", this);
-    maxSuggestionsLabel->setStyleSheet("QLabel { font-size: 12px; }");
-    maxSuggestionsInput = new QSpinBox(this);
-    maxSuggestionsInput->setMinimum(1);
-    maxSuggestionsInput->setMaximum(50);
-    maxSuggestionsInput->setValue(10);
-    maxSuggestionsInput->setStyleSheet("QSpinBox { font-size: 12px; padding: 2px; }");
-    maxSuggestionsInput->setEnabled(false);
-    maxSuggestionsInput->setToolTip("Maximum number of word suggestions to display");
-    
-    QLabel *thresholdLabel = new QLabel("Occurrence Threshold:", this);
+    QLabel *thresholdLabel = new QLabel("Maximum Predictions (X):", this);
     thresholdLabel->setStyleSheet("QLabel { font-size: 12px; }");
     thresholdInput = new QSpinBox(this);
     thresholdInput->setMinimum(1);
     thresholdInput->setMaximum(1000);
-    thresholdInput->setValue(100);
+    thresholdInput->setValue(5);
     thresholdInput->setStyleSheet("QSpinBox { font-size: 12px; padding: 2px; }");
     thresholdInput->setEnabled(false);
-    thresholdInput->setToolTip("Occurrence threshold - prefixes appearing more than this number of times will be filtered out");
+    thresholdInput->setToolTip("Predictions are shown when distinct substrings with matching prefix ≤ X");
     
-    paramsLayout->addWidget(maxSuggestionsLabel);
-    paramsLayout->addWidget(maxSuggestionsInput);
-    paramsLayout->addSpacing(20);
     paramsLayout->addWidget(thresholdLabel);
     paramsLayout->addWidget(thresholdInput);
     paramsLayout->addStretch();
@@ -141,10 +128,9 @@ void PredictionWindow::buildTree() {
         treeVisualizer->setTree(tree->getRoot(), tree->getText());
 
         prefixInput->setEnabled(true);
-        maxSuggestionsInput->setEnabled(true);
         thresholdInput->setEnabled(true);
         predictButton->setEnabled(true);
-        resultText->setText("Suffix tree built successfully! Enter a prefix to predict words.");
+        resultText->setText("Suffix tree built successfully! Enter a query string to find minimum prefix index.");
     } catch (const std::exception &e) {
         QMessageBox::critical(this, "Error", QString("Failed to build tree: %1").arg(e.what()));
     }
@@ -156,20 +142,19 @@ void PredictionWindow::predictCompletions() {
         return;
     }
 
-    QString prefix = prefixInput->text();
-    if (prefix.isEmpty()) {
-        QMessageBox::warning(this, "Input Error", "Please enter a prefix.");
+    QString query = prefixInput->text();
+    if (query.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Please enter a query string.");
         return;
     }
 
-    int maxSuggestions = maxSuggestionsInput->value();
-    int threshold = thresholdInput->value();
+    int maxPredictions = thresholdInput->value();
 
     // Redirect output to resultText
     std::stringstream buffer;
     std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
 
-    tree->predictCompletions(prefix.toStdString(), maxSuggestions, threshold);
+    tree->predictCompletions(query.toStdString(), maxPredictions, maxPredictions);
 
     std::cout.rdbuf(old);
 

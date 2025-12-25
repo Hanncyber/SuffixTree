@@ -342,9 +342,9 @@ void SuffixTree::predictCompletions(const string& query, int maxSuggestions, int
         }
 
         // Count distinct substrings (leaf nodes)
-        int dummy[1];
+        int positions[1000];
         int count = 0;
-        collectLeafIndices(cur, dummy, count);
+        collectLeafIndices(cur, positions, count);
 
         cout << "Prefix \"" << prefix << "\" → " << count << " predictions\n";
 
