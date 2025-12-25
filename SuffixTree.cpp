@@ -240,60 +240,121 @@ void SuffixTree::detect_longest_pattern()
     }
 }
 
-void SuffixTree::predictCompletions(const string& prefix, int maxSuggestions, int no)
+// void SuffixTree::predictCompletions(const string& prefix, int maxSuggestions, int no)
+// {
+//     SuffixNode* cur = root;
+//     int i = 0;
+//     while (i < (int)prefix.length()){
+//         char c = prefix[i];
+//         if (!cur->children[(int)c]) {
+//             cout << "No suggestions found for \"" << prefix << "\"\n";
+//             return;
+//         }
+//         SuffixNode* next = cur->children[(int)c];
+//         int edgelen = edgeLength(next);
+
+//         for (int k = 0; k < edgelen && i < (int)prefix.length(); k++, i++)
+//         {
+//             if (treeText[next->start + k] != prefix[i]) {
+//                 cout << "No suggestions found for \"" << prefix << "\"\n";
+//                 return;
+//             }
+//         }
+//         cur = next;
+//     }
+//     int positions[1000];
+//     int count = 0;
+//     collectLeafIndices(cur, positions, count);
+
+//     cout << "Prefix given \"" << prefix << "\":\n";
+//     if (count > no) {
+//         cout << "No suggestions found.\n";
+//         return;
+//     }
+//     int suggestionsCount = 0;
+//     for (int j = 0; j < count && suggestionsCount < maxSuggestions; j++)
+//     {
+//         int start = positions[j];
+//         string word;
+//         for (int k = start; k < (int)treeText.length(); k++) {
+//             char ch = treeText[k];
+//             if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '.' || ch == ',' || ch == '$') break;
+//             word += ch;
+//         }
+//         bool found = true;
+//         for (int k = 0; k < (int)prefix.length(); k++) {
+//             if (k >= (int)word.length() || word[k] != prefix[k]) {
+//                 found = false;
+//                 break;
+//             }
+//         }
+//         if (!found) continue;
+
+//         cout << "  " << word << "\n";
+//         suggestionsCount++;
+//     }
+//     if (suggestionsCount == 0) {
+//         cout << "  No suggestions found.\n";
+//     }
+// }
+
+void SuffixTree::predictCompletions(const string& query, int maxSuggestions, int no)
 {
-    SuffixNode* cur = root;
-    int i = 0;
-    while (i < (int)prefix.length()){
-        char c = prefix[i];
-        if (!cur->children[(int)c]) {
-            cout << "No suggestions found for \"" << prefix << "\"\n";
-            return;
-        }
-        SuffixNode* next = cur->children[(int)c];
-        int edgelen = edgeLength(next);
+    int answer = -1;
 
-        for (int k = 0; k < edgelen && i < (int)prefix.length(); k++, i++)
-        {
-            if (treeText[next->start + k] != prefix[i]) {
-                cout << "No suggestions found for \"" << prefix << "\"\n";
-                return;
-            }
-        }
-        cur = next;
-    }
-    int positions[1000];
-    int count = 0;
-    collectLeafIndices(cur, positions, count);
+    cout << "Query string: \"" << query << "\"\n";
 
-    cout << "Prefix given \"" << prefix << "\":\n";
-    if (count > no) {
-        cout << "No suggestions found.\n";
-        return;
-    }
-    int suggestionsCount = 0;
-    for (int j = 0; j < count && suggestionsCount < maxSuggestions; j++)
-    {
-        int start = positions[j];
-        string word;
-        for (int k = start; k < (int)treeText.length(); k++) {
-            char ch = treeText[k];
-            if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '.' || ch == ',' || ch == '$') break;
-            word += ch;
-        }
-        bool found = true;
-        for (int k = 0; k < (int)prefix.length(); k++) {
-            if (k >= (int)word.length() || word[k] != prefix[k]) {
-                found = false;
+    // Try all prefixes
+    for (int len = 1; len <= (int)query.length(); len++) {
+
+        string prefix = query.substr(0, len);
+
+        SuffixNode* cur = root;
+        int i = 0;
+        bool failed = false;
+
+        // Traverse suffix tree for this prefix
+        while (i < (int)prefix.length()) {
+            unsigned char c = prefix[i];
+
+            if (!cur->children[c]) {
+                failed = true;
                 break;
             }
-        }
-        if (!found) continue;
 
-        cout << "  " << word << "\n";
-        suggestionsCount++;
+            SuffixNode* next = cur->children[c];
+            int edgelen = edgeLength(next);
+
+            for (int k = 0; k < edgelen && i < (int)prefix.length(); k++, i++) {
+                if (treeText[next->start + k] != prefix[i]) {
+                    failed = true;
+                    break;
+                }
+            }
+            if (failed) break;
+
+            cur = next;
+        }
+
+        if (failed) {
+            cout << "Prefix \"" << prefix << "\" → 0 predictions\n";
+            continue;
+        }
+
+        // Count distinct substrings (leaf nodes)
+        int positions[1000];
+        int count = 0;
+        collectLeafIndices(cur, positions, count);
+        if (count <= no)
+            cout << "Prefix \"" << prefix << "\" → " << count << " predictions\n";
+        // Record first valid prefix
+        if (count <= no && answer == -1)
+            answer = len;
     }
-    if (suggestionsCount == 0) {
-        cout << "  No suggestions found.\n";
-    }
+
+    cout << "----------------------------------\n";
+    if (answer != -1)
+        cout << "Minimum prefix index = " << answer << "\n";
+    else
+        cout << "Minimum prefix index = -1\n";
 }
