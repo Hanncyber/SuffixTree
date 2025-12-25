@@ -1,6 +1,6 @@
 #include "SuffixTree.h"
 #include <iostream>
-
+using namespace std;
 SuffixTree::SuffixTree(string text) {
     treeText = text + "$"; 
     leafptr= new int(-1);
@@ -240,14 +240,14 @@ void SuffixTree::detect_longest_pattern()
     }
 }
 
-void SuffixTree::predictCompletions(const std::string& prefix, int maxSuggestions)
+void SuffixTree::predictCompletions(const string& prefix, int maxSuggestions, int no)
 {
     SuffixNode* cur = root;
     int i = 0;
     while (i < (int)prefix.length()){
         char c = prefix[i];
         if (!cur->children[(int)c]) {
-            std::cout << "No suggestions found for \"" << prefix << "\"\n";
+            cout << "No suggestions found for \"" << prefix << "\"\n";
             return;
         }
         SuffixNode* next = cur->children[(int)c];
@@ -256,7 +256,7 @@ void SuffixTree::predictCompletions(const std::string& prefix, int maxSuggestion
         for (int k = 0; k < edgelen && i < (int)prefix.length(); k++, i++)
         {
             if (treeText[next->start + k] != prefix[i]) {
-                std::cout << "No suggestions found for \"" << prefix << "\"\n";
+                cout << "No suggestions found for \"" << prefix << "\"\n";
                 return;
             }
         }
@@ -266,13 +266,16 @@ void SuffixTree::predictCompletions(const std::string& prefix, int maxSuggestion
     int count = 0;
     collectLeafIndices(cur, positions, count);
 
-    std::cout << "Prefix given \"" << prefix << "\":\n";
-
+    cout << "Prefix given \"" << prefix << "\":\n";
+    if (count > no) {
+        cout << "No suggestions found.\n";
+        return;
+    }
     int suggestionsCount = 0;
     for (int j = 0; j < count && suggestionsCount < maxSuggestions; j++)
     {
         int start = positions[j];
-        std::string word;
+        string word;
         for (int k = start; k < (int)treeText.length(); k++) {
             char ch = treeText[k];
             if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '.' || ch == ',' || ch == '$') break;
@@ -286,10 +289,11 @@ void SuffixTree::predictCompletions(const std::string& prefix, int maxSuggestion
             }
         }
         if (!found) continue;
-        std::cout << "  " << word << "\n";
+
+        cout << "  " << word << "\n";
         suggestionsCount++;
     }
     if (suggestionsCount == 0) {
-        std::cout << "  No suggestions found.\n";
+        cout << "  No suggestions found.\n";
     }
 }

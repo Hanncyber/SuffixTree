@@ -50,7 +50,7 @@ public:
     void detect_longest_pattern();
     void  find_longest_repeatedSubstring(SuffixNode* node, int labelHeight, int& maxLength, int& startIndex);
     // for google predicition
-    void predictCompletions(const string& prefix, int maxSuggestions = 5);
+    void predictCompletions(const string& prefix, int maxSuggestions = 5, int no=100);
     // Getters for GUI visualization
     SuffixNode* getRoot() const { return root; }
     string getText() const { return treeText; }
