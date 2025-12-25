@@ -67,6 +67,37 @@ void PredictionWindow::setupUI() {
     prefixLayout->addWidget(predictButton, 1);
     mainLayout->addLayout(prefixLayout);
 
+    // Parameters layout (maxSuggestions and frequency threshold)
+    QHBoxLayout *paramsLayout = new QHBoxLayout();
+    
+    // Max Suggestions control
+    QLabel *maxSuggestionsLabel = new QLabel("Max Suggestions:", this);
+    maxSuggestionsLabel->setStyleSheet("QLabel { font-size: 12px; }");
+    maxSuggestionsInput = new QSpinBox(this);
+    maxSuggestionsInput->setMinimum(1);
+    maxSuggestionsInput->setMaximum(100);
+    maxSuggestionsInput->setValue(5);  // Match default in SuffixTree.h
+    maxSuggestionsInput->setStyleSheet("QSpinBox { font-size: 12px; padding: 2px; }");
+    maxSuggestionsInput->setEnabled(false);
+    
+    // Frequency Threshold control
+    QLabel *freqThresholdLabel = new QLabel("Frequency Threshold:", this);
+    freqThresholdLabel->setStyleSheet("QLabel { font-size: 12px; }");
+    freqThresholdInput = new QSpinBox(this);
+    freqThresholdInput->setMinimum(1);
+    freqThresholdInput->setMaximum(10000);
+    freqThresholdInput->setValue(100);  // Match default in SuffixTree.h
+    freqThresholdInput->setToolTip("If prefix appears more than this many times, no suggestions will be shown");
+    freqThresholdInput->setStyleSheet("QSpinBox { font-size: 12px; padding: 2px; }");
+    freqThresholdInput->setEnabled(false);
+    
+    paramsLayout->addWidget(maxSuggestionsLabel);
+    paramsLayout->addWidget(maxSuggestionsInput);
+    paramsLayout->addWidget(freqThresholdLabel);
+    paramsLayout->addWidget(freqThresholdInput);
+    paramsLayout->addStretch();
+    mainLayout->addLayout(paramsLayout);
+
     // Result display
     resultText = new QTextEdit(this);
     resultText->setReadOnly(true);
@@ -111,6 +142,8 @@ void PredictionWindow::buildTree() {
 
         prefixInput->setEnabled(true);
         predictButton->setEnabled(true);
+        maxSuggestionsInput->setEnabled(true);
+        freqThresholdInput->setEnabled(true);
         resultText->setText("Suffix tree built successfully! Enter a prefix to predict words.");
     } catch (const std::exception &e) {
         QMessageBox::critical(this, "Error", QString("Failed to build tree: %1").arg(e.what()));
@@ -133,7 +166,9 @@ void PredictionWindow::predictCompletions() {
     std::stringstream buffer;
     std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
 
-    tree->predictCompletions(prefix.toStdString(), 10); // up to 10 suggestions
+    int maxSuggestions = maxSuggestionsInput->value();
+    int freqThreshold = freqThresholdInput->value();
+    tree->predictCompletions(prefix.toStdString(), maxSuggestions, freqThreshold);
 
     std::cout.rdbuf(old);
 

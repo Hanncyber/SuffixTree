@@ -33,6 +33,7 @@ private:
     QPushButton *buildButton;
     QLineEdit *prefixInput;
     QSpinBox *maxSuggestionsInput;
+    QSpinBox *freqThresholdInput;
     QPushButton *predictButton;
     QTextEdit *resultText;
     QPushButton *backButton;
