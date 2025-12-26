@@ -98,8 +98,7 @@ void EmployeeRating::dfs(int employee) {
 
     // Add this employee's rating to the dfsString
     // Map ratings to characters using offset 33 to stay in printable ASCII
-    // Ensure the result stays within valid signed char range (-128 to 127)
-    // Since we add 33, max rating should be 127-33=94 to avoid overflow
+    // Clamp to 127 (max signed char value) to prevent overflow with high ratings
     int charValue = rating[employee] + 33;
     if (charValue > 127) {
         charValue = 127; // Clamp to max valid signed char value
