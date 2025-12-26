@@ -4,7 +4,6 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QTabWidget>
 #include <sstream>
 
 EmployeeRatingWindow::EmployeeRatingWindow(QWidget *parent)
@@ -33,19 +32,13 @@ void EmployeeRatingWindow::setupUI() {
     title->setStyleSheet("color: #9B59B6;");
     mainLayout->addWidget(title);
 
-    // ---------- Create Tab Widget ----------
-    tabWidget = new QTabWidget(this);
-    tabWidget->setStyleSheet(
-        "QTabWidget::pane { border: 2px solid #9B59B6; border-radius: 5px; }"
-        "QTabBar::tab { background-color: #ECF0F1; color: #2C3E50; padding: 10px 20px; font-size: 13px; font-weight: bold; border-top-left-radius: 5px; border-top-right-radius: 5px; margin-right: 2px; }"
-        "QTabBar::tab:selected { background-color: #9B59B6; color: white; }"
-        "QTabBar::tab:hover { background-color: #BDC3C7; }"
-    );
-    mainLayout->addWidget(tabWidget);
-
-    // ---------- Create Controls Tab ----------
-    QWidget *controlsTab = new QWidget();
-    QVBoxLayout *controlsLayout = new QVBoxLayout(controlsTab);
+    // ---------- Create Horizontal Layout for Controls and Tree ----------
+    QHBoxLayout *contentLayout = new QHBoxLayout();
+    contentLayout->setSpacing(15);
+    
+    // ---------- Left Side: Controls ----------
+    QWidget *controlsWidget = new QWidget(this);
+    QVBoxLayout *controlsLayout = new QVBoxLayout(controlsWidget);
     controlsLayout->setContentsMargins(10, 10, 10, 10);
     controlsLayout->setSpacing(10);
 
@@ -56,22 +49,22 @@ void EmployeeRatingWindow::setupUI() {
         "Step 2: Add subordinates and set initial ratings\n"
         "Step 3: Build the hierarchy\n"
         "Step 4: Perform updates (Type 0) or queries (Type 1)",
-        controlsTab);
+        controlsWidget);
     instructions->setStyleSheet("QLabel { font-size: 11px; color: #7F8C8D; padding: 5px; }");
     instructions->setWordWrap(true);
     controlsLayout->addWidget(instructions);
 
     // ---------- Company Initialization Section ----------
-    QGroupBox *initGroup = new QGroupBox("Step 1: Initialize Company", controlsTab);
+    QGroupBox *initGroup = new QGroupBox("Step 1: Initialize Company", controlsWidget);
     QHBoxLayout *initLayout = new QHBoxLayout();
     
-    QLabel *numEmpLabel = new QLabel("Number of employees (including head H):", controlsTab);
-    numEmployeesInput = new QSpinBox(controlsTab);
+    QLabel *numEmpLabel = new QLabel("Number of employees (including head H):", controlsWidget);
+    numEmployeesInput = new QSpinBox(controlsWidget);
     numEmployeesInput->setRange(1, 26);
     numEmployeesInput->setValue(5);
     numEmployeesInput->setStyleSheet("QSpinBox { font-size: 13px; padding: 4px; }");
     
-    initButton = new QPushButton("Initialize", controlsTab);
+    initButton = new QPushButton("Initialize", controlsWidget);
     initButton->setStyleSheet(
         "QPushButton { background-color: #9B59B6; color: white; font-weight: bold; border-radius: 5px; padding: 5px; }"
         "QPushButton:hover { background-color: #8E44AD; }"
@@ -85,26 +78,26 @@ void EmployeeRatingWindow::setupUI() {
     controlsLayout->addWidget(initGroup);
 
     // ---------- Hierarchy Building Section ----------
-    QGroupBox *hierarchyGroup = new QGroupBox("Step 2: Build Hierarchy & Set Ratings", controlsTab);
+    QGroupBox *hierarchyGroup = new QGroupBox("Step 2: Build Hierarchy & Set Ratings", controlsWidget);
     QVBoxLayout *hierarchyLayout = new QVBoxLayout();
     
     // Add subordinate
     QHBoxLayout *subordinateLayout = new QHBoxLayout();
-    QLabel *managerLabel = new QLabel("Manager:", controlsTab);
-    managerInput = new QLineEdit(controlsTab);
+    QLabel *managerLabel = new QLabel("Manager:", controlsWidget);
+    managerInput = new QLineEdit(controlsWidget);
     managerInput->setPlaceholderText("e.g., H");
     managerInput->setMaxLength(1);
     managerInput->setStyleSheet("QLineEdit { font-size: 13px; padding: 4px; }");
     managerInput->setEnabled(false);
     
-    QLabel *subordinateLabel = new QLabel("Subordinate:", controlsTab);
-    subordinateInput = new QLineEdit(controlsTab);
+    QLabel *subordinateLabel = new QLabel("Subordinate:", controlsWidget);
+    subordinateInput = new QLineEdit(controlsWidget);
     subordinateInput->setPlaceholderText("e.g., A");
     subordinateInput->setMaxLength(1);
     subordinateInput->setStyleSheet("QLineEdit { font-size: 13px; padding: 4px; }");
     subordinateInput->setEnabled(false);
     
-    addSubordinateButton = new QPushButton("Add Subordinate", controlsTab);
+    addSubordinateButton = new QPushButton("Add Subordinate", controlsWidget);
     addSubordinateButton->setStyleSheet(
         "QPushButton { background-color: #3498DB; color: white; font-weight: bold; border-radius: 5px; padding: 5px; }"
         "QPushButton:hover { background-color: #2980B9; }"
@@ -122,21 +115,21 @@ void EmployeeRatingWindow::setupUI() {
     
     // Set rating
     QHBoxLayout *ratingLayout = new QHBoxLayout();
-    QLabel *empRatingLabel = new QLabel("Employee:", controlsTab);
-    employeeRatingInput = new QLineEdit(controlsTab);
+    QLabel *empRatingLabel = new QLabel("Employee:", controlsWidget);
+    employeeRatingInput = new QLineEdit(controlsWidget);
     employeeRatingInput->setPlaceholderText("e.g., H");
     employeeRatingInput->setMaxLength(1);
     employeeRatingInput->setStyleSheet("QLineEdit { font-size: 13px; padding: 4px; }");
     employeeRatingInput->setEnabled(false);
     
-    QLabel *ratingLabel = new QLabel("Rating:", controlsTab);
-    ratingValueInput = new QSpinBox(controlsTab);
+    QLabel *ratingLabel = new QLabel("Rating:", controlsWidget);
+    ratingValueInput = new QSpinBox(controlsWidget);
     ratingValueInput->setRange(1, 100);
     ratingValueInput->setValue(10);
     ratingValueInput->setStyleSheet("QSpinBox { font-size: 13px; padding: 4px; }");
     ratingValueInput->setEnabled(false);
     
-    setRatingButton = new QPushButton("Set Rating", controlsTab);
+    setRatingButton = new QPushButton("Set Rating", controlsWidget);
     setRatingButton->setStyleSheet(
         "QPushButton { background-color: #2ECC71; color: white; font-weight: bold; border-radius: 5px; padding: 5px; }"
         "QPushButton:hover { background-color: #27AE60; }"
@@ -156,7 +149,7 @@ void EmployeeRatingWindow::setupUI() {
     controlsLayout->addWidget(hierarchyGroup);
 
     // ---------- Build Button ----------
-    buildButton = new QPushButton("Step 3: Build Hierarchy Tree", controlsTab);
+    buildButton = new QPushButton("Step 3: Build Hierarchy Tree", controlsWidget);
     buildButton->setStyleSheet(
         "QPushButton { background-color: #E67E22; color: white; font-weight: bold; border-radius: 5px; padding: 10px; font-size: 14px; }"
         "QPushButton:hover { background-color: #D35400; }"
@@ -167,30 +160,30 @@ void EmployeeRatingWindow::setupUI() {
     controlsLayout->addWidget(buildButton);
 
     // ---------- Query Section ----------
-    QGroupBox *queryGroup = new QGroupBox("Step 4: Perform Operations", controlsTab);
+    QGroupBox *queryGroup = new QGroupBox("Step 4: Perform Operations", controlsWidget);
     QVBoxLayout *queryLayout = new QVBoxLayout();
     
     // Type 0: Update
     QHBoxLayout *updateLayout = new QHBoxLayout();
-    QLabel *updateLabel = new QLabel("Type 0 - Update Subtree:", controlsTab);
+    QLabel *updateLabel = new QLabel("Type 0 - Update Subtree:", controlsWidget);
     updateLabel->setStyleSheet("font-weight: bold;");
     queryLayout->addWidget(updateLabel);
     
-    QLabel *updateEmpLabel = new QLabel("Employee:", controlsTab);
-    updateEmployeeInput = new QLineEdit(controlsTab);
+    QLabel *updateEmpLabel = new QLabel("Employee:", controlsWidget);
+    updateEmployeeInput = new QLineEdit(controlsWidget);
     updateEmployeeInput->setPlaceholderText("e.g., A");
     updateEmployeeInput->setMaxLength(1);
     updateEmployeeInput->setStyleSheet("QLineEdit { font-size: 13px; padding: 4px; }");
     updateEmployeeInput->setEnabled(false);
     
-    QLabel *updateValLabel = new QLabel("Update by:", controlsTab);
-    updateValueInput = new QSpinBox(controlsTab);
+    QLabel *updateValLabel = new QLabel("Update by:", controlsWidget);
+    updateValueInput = new QSpinBox(controlsWidget);
     updateValueInput->setRange(-100, 100);
     updateValueInput->setValue(5);
     updateValueInput->setStyleSheet("QSpinBox { font-size: 13px; padding: 4px; }");
     updateValueInput->setEnabled(false);
     
-    updateButton = new QPushButton("Update Subtree", controlsTab);
+    updateButton = new QPushButton("Update Subtree", controlsWidget);
     updateButton->setStyleSheet(
         "QPushButton { background-color: #F39C12; color: white; font-weight: bold; border-radius: 5px; padding: 5px; }"
         "QPushButton:hover { background-color: #E67E22; }"
@@ -208,18 +201,18 @@ void EmployeeRatingWindow::setupUI() {
     
     // Type 1: Query
     QHBoxLayout *queryPerformanceLayout = new QHBoxLayout();
-    QLabel *queryLabel = new QLabel("Type 1 - Query Performance (GCD):", controlsTab);
+    QLabel *queryLabel = new QLabel("Type 1 - Query Performance (GCD):", controlsWidget);
     queryLabel->setStyleSheet("font-weight: bold;");
     queryLayout->addWidget(queryLabel);
     
-    QLabel *queryEmpLabel = new QLabel("Employee:", controlsTab);
-    queryEmployeeInput = new QLineEdit(controlsTab);
+    QLabel *queryEmpLabel = new QLabel("Employee:", controlsWidget);
+    queryEmployeeInput = new QLineEdit(controlsWidget);
     queryEmployeeInput->setPlaceholderText("e.g., H");
     queryEmployeeInput->setMaxLength(1);
     queryEmployeeInput->setStyleSheet("QLineEdit { font-size: 13px; padding: 4px; }");
     queryEmployeeInput->setEnabled(false);
     
-    queryButton = new QPushButton("Query Performance", controlsTab);
+    queryButton = new QPushButton("Query Performance", controlsWidget);
     queryButton->setStyleSheet(
         "QPushButton { background-color: #1ABC9C; color: white; font-weight: bold; border-radius: 5px; padding: 5px; }"
         "QPushButton:hover { background-color: #16A085; }"
@@ -238,7 +231,7 @@ void EmployeeRatingWindow::setupUI() {
     controlsLayout->addWidget(queryGroup);
 
     // ---------- Result display ----------
-    resultText = new QTextEdit(controlsTab);
+    resultText = new QTextEdit(controlsWidget);
     resultText->setReadOnly(true);
     resultText->setStyleSheet(
         "QTextEdit { font-size: 13px; background-color: #2C3E50; color: #ECF0F1; border: 1px solid #34495E; }"
@@ -247,18 +240,18 @@ void EmployeeRatingWindow::setupUI() {
     controlsLayout->addWidget(resultText);
 
     controlsLayout->addStretch();
+    
+    // Add controls widget to content layout
+    contentLayout->addWidget(controlsWidget, 1);
 
-    // Add controls tab to tab widget
-    tabWidget->addTab(controlsTab, "Controls");
-
-    // ---------- Create Visualization Tab ----------
-    QWidget *visualizationTab = new QWidget();
-    QVBoxLayout *visualizationLayout = new QVBoxLayout(visualizationTab);
+    // ---------- Right Side: Tree Visualization ----------
+    QWidget *visualizationWidget = new QWidget(this);
+    QVBoxLayout *visualizationLayout = new QVBoxLayout(visualizationWidget);
     visualizationLayout->setContentsMargins(10, 10, 10, 10);
     visualizationLayout->setSpacing(5);
 
-    // Add label for visualization tab
-    QLabel *vizLabel = new QLabel("Employee Hierarchy Tree Visualization", visualizationTab);
+    // Add label for visualization section
+    QLabel *vizLabel = new QLabel("Employee Hierarchy Tree Visualization", visualizationWidget);
     QFont vizFont = vizLabel->font();
     vizFont.setPointSize(14);
     vizFont.setBold(true);
@@ -268,15 +261,18 @@ void EmployeeRatingWindow::setupUI() {
     visualizationLayout->addWidget(vizLabel);
 
     // ---------- Tree visualizer ----------
-    scrollArea = new QScrollArea(visualizationTab);
+    scrollArea = new QScrollArea(visualizationWidget);
     scrollArea->setWidgetResizable(true);
     scrollArea->setStyleSheet("QScrollArea { border: 1px solid #34495E; background-color: #FAFAFF; }");
-    treeVisualizer = new EmployeeTreeVisualizer(visualizationTab);
+    treeVisualizer = new EmployeeTreeVisualizer(visualizationWidget);
     scrollArea->setWidget(treeVisualizer);
     visualizationLayout->addWidget(scrollArea);
 
-    // Add visualization tab to tab widget
-    tabWidget->addTab(visualizationTab, "Tree Visualization");
+    // Add visualization widget to content layout
+    contentLayout->addWidget(visualizationWidget, 1);
+    
+    // Add content layout to main layout
+    mainLayout->addLayout(contentLayout);
 
     // ---------- Back button ----------
     backButton = new QPushButton("Back to Main Menu", this);
@@ -305,9 +301,6 @@ void EmployeeRatingWindow::initializeCompany() {
     // Disable initialization controls
     numEmployeesInput->setEnabled(false);
     initButton->setEnabled(false);
-    
-    // Update tree visualizer with initial data
-    updateTreeVisualization();
     
     resultText->clear();
     resultText->append(QString("✓ Company initialized with %1 employees.").arg(numEmployees));
@@ -387,9 +380,6 @@ void EmployeeRatingWindow::addSubordinateToHierarchy() {
         return;
     }
     
-    // Update tree visualization
-    updateTreeVisualization();
-    
     resultText->append(QString("✓ Added %1 as subordinate of %2")
                       .arg(subordinateStr)
                       .arg(managerStr));
@@ -422,9 +412,6 @@ void EmployeeRatingWindow::setEmployeeRating() {
     
     empRating->setInitialRating(employee, rating);
     
-    // Update tree visualization with new rating
-    updateTreeVisualization();
-    
     resultText->append(QString("✓ Set rating of %1 to %2")
                       .arg(empStr)
                       .arg(rating));
@@ -448,7 +435,7 @@ void EmployeeRatingWindow::buildHierarchy() {
     enableQueryInputs(true);
     
     // Update tree visualization after building
-    // updateTreeVisualization();
+    updateTreeVisualization();
     
     resultText->append("\n✓ Hierarchy tree built successfully!");
     resultText->append("You can now perform updates (Type 0) and queries (Type 1).");

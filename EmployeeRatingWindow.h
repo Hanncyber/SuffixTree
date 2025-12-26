@@ -9,7 +9,6 @@
 #include <QLabel>
 #include <QSpinBox>
 #include <QScrollArea>
-#include <QTabWidget>
 #include "employeerating.h"
 #include "EmployeeTreeVisualizer.h"
 
@@ -37,7 +36,6 @@ private:
     void updateTreeVisualization();
     
     QVBoxLayout *mainLayout;
-    QTabWidget *tabWidget;
     QLabel *titleLabel;
     
     // Company initialization
