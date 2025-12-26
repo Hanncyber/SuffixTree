@@ -331,7 +331,7 @@ bool EmployeeRatingWindow::isValidEmployeeChar(char c) {
 }
 
 void EmployeeRatingWindow::updateTreeVisualization() {
-    if (empRating && isInitialized && treeVisualizer) {
+    if (empRating && isInitialized && isBuilt && treeVisualizer) {
         // Get data from empRating
         int numEmps = empRating->getNumEmployees();
         int* const* treeData = empRating->getTree();
