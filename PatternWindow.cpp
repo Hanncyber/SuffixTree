@@ -2,6 +2,8 @@
 #include <QMessageBox>
 #include <QFont>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QScrollArea>
 #include <sstream>
 #include <iostream>
 
@@ -17,30 +19,65 @@ PatternWindow::~PatternWindow() {
 }
 
 void PatternWindow::setupUI() {
+    this->setStyleSheet(R"(
+        QWidget {
+            background-color: #1A1A1A;
+            font-family: Arial;
+        }
+        QLabel {
+            color: #EDEDED;
+        }
+        QLineEdit {
+            font-size: 13px;
+            padding: 6px;
+            background-color: #2C2C2C;
+            color: #FFFFFF;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
+        QTextEdit {
+            font-size: 13px;
+            background-color: #2C2C2C;
+            color: #FFFFFF;
+            font-family: monospace;
+            border: 1px solid #444;
+        }
+        QPushButton {
+            background-color: #7C6DB0;  /* lilac */
+            color: #FFFFFF;
+            border: 1px solid #9F91D8;
+            border-radius: 5px;
+            padding: 6px;
+            font-weight: 500;
+        }
+        QPushButton:hover {
+            background-color: #8E7FD1;
+        }
+        QPushButton:pressed {
+            background-color: #6B5AA6;
+        }
+    )");
+
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(10);
     mainLayout->setContentsMargins(15, 15, 15, 15);
 
-    // ---------- Title ----------
+
     QLabel *title = new QLabel("Longest Repeated Pattern Finder", this);
-    QFont titleFont = title->font();
-    titleFont.setPointSize(20);
-    titleFont.setBold(true);
+    QFont titleFont("Verdana", 24, QFont::DemiBold);
     title->setFont(titleFont);
     title->setAlignment(Qt::AlignCenter);
-    title->setStyleSheet("color: #2ECC71;");
+    title->setStyleSheet("color: #C8A2C8;");
     mainLayout->addWidget(title);
 
-    // ---------- Text input ----------
     QHBoxLayout *textLayout = new QHBoxLayout();
     textInput = new QLineEdit(this);
     textInput->setPlaceholderText("Enter text to analyze, e.g., abcabcabc");
-    textInput->setStyleSheet("QLineEdit { font-size: 13px; padding: 4px; }");
 
     buildButton = new QPushButton("Build Tree", this);
     buildButton->setStyleSheet(
-        "QPushButton { background-color: #2ECC71; color: white; font-weight: bold; border-radius: 5px; padding: 5px; }"
-        "QPushButton:hover { background-color: #27AE60; }"
+        "QPushButton { background-color: #7C6DB0; color: white; font-weight: bold; border-radius: 5px; padding: 6px; }"
+        "QPushButton:hover { background-color: #8E7FD1; }"
         );
     connect(buildButton, &QPushButton::clicked, this, &PatternWindow::buildTree);
 
@@ -48,32 +85,27 @@ void PatternWindow::setupUI() {
     textLayout->addWidget(buildButton, 1);
     mainLayout->addLayout(textLayout);
 
-    // ---------- Find pattern button ----------
+
     findButton = new QPushButton("Find Longest Repeated Pattern", this);
-    findButton->setStyleSheet(
-        "QPushButton { background-color: #F39C12; color: white; font-weight: bold; border-radius: 5px; padding: 8px; }"
-        "QPushButton:hover { background-color: #E67E22; }"
-        "QPushButton:disabled { background-color: #BDC3C7; }"
-        );
     findButton->setEnabled(false);
+    findButton->setStyleSheet(
+        "QPushButton { background-color: #7C6DB0; color: white; font-weight: bold; border-radius: 5px; padding: 8px; }"
+        "QPushButton:hover { background-color: #8E7FD1; }"
+        "QPushButton:disabled { background-color: #555; color: #AAA; }"
+        );
     connect(findButton, &QPushButton::clicked, this, &PatternWindow::findPattern);
     mainLayout->addWidget(findButton);
 
-    // ---------- Result area ----------
+
     resultText = new QTextEdit(this);
     resultText->setReadOnly(true);
     resultText->setMaximumHeight(80);
-    resultText->setStyleSheet(
-        "QTextEdit { font-size: 13px; background-color: #2C3E50; color: #ECF0F1; font-family: monospace; border: 1px solid #34495E; }"
-        );
     mainLayout->addWidget(resultText);
 
-    // ---------- Tree visualizer ----------
+
     scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
     scrollArea->setMinimumHeight(350);
-    scrollArea->setStyleSheet("QScrollArea { border: 1px solid #34495E; }");
-
     treeVisualizer = new TreeVisualizer(nullptr, "", this);
     scrollArea->setWidget(treeVisualizer);
     mainLayout->addWidget(scrollArea);
@@ -81,8 +113,8 @@ void PatternWindow::setupUI() {
     // ---------- Back button ----------
     backButton = new QPushButton("Back to Main Menu", this);
     backButton->setStyleSheet(
-        "QPushButton { background-color: #95A5A6; color: white; font-weight: bold; border-radius: 5px; padding: 5px; }"
-        "QPushButton:hover { background-color: #7F8C8D; }"
+        "QPushButton { background-color: #B91C1C; color: #FFFFFF; font-weight: bold; border-radius: 5px; padding: 6px; }"
+        "QPushButton:hover { background-color: #DC2626; }"
         );
     connect(backButton, &QPushButton::clicked, this, &PatternWindow::goBack);
     mainLayout->addWidget(backButton, 0, Qt::AlignRight);
@@ -114,11 +146,10 @@ void PatternWindow::findPattern() {
         return;
     }
 
-    // Capture output from detect_longest_pattern() if needed
     std::stringstream buffer;
     std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
 
-    tree->detect_longest_pattern();  // Make sure this prints to std::cout
+    tree->detect_longest_pattern();
 
     std::cout.rdbuf(old);
 
