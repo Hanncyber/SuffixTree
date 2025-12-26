@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QLabel>
 #include <QWidget>
 
@@ -26,6 +28,9 @@ private:
     void setupUI();
     QWidget *centralWidget;
     QVBoxLayout *mainLayout;
+    QHBoxLayout *headerLayout;
+    QGridLayout *buttonsLayout;
+    QLabel *logoLabel;
     QLabel *titleLabel;
     QPushButton *searchButton;
     QPushButton *mutationButton;
