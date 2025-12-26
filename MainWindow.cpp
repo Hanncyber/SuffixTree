@@ -14,6 +14,7 @@
 #include <QFont>
 #include <QWidget>
 #include <QList>
+#include <QStringList>
 #include <QPixmap>
 #include <QIcon>
 
