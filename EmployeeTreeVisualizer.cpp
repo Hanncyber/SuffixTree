@@ -167,6 +167,8 @@ void EmployeeTreeVisualizer::paintEvent(QPaintEvent*) {
         const EmployeeNodePosition& pos = it.second;
 
         for (int i = 0; i < childCount[employeeIndex]; ++i) {
+            if (!employeeTree[employeeIndex])
+                continue;
             int childIndex = employeeTree[employeeIndex][i];
             auto childIt = nodePositions.find(childIndex);
             if (childIt != nodePositions.end()) {

@@ -97,8 +97,13 @@ void EmployeeRating::dfs(int employee) {
     tin[employee] = timer++;
 
     // Add this employee's rating to the dfsString
-    // We map ratings to characters using offset 1-127
-    char ratingChar = char((rating[employee] + 33)); // 33 to stay in printable ASCII
+    // Map ratings to characters using offset 33 to stay in printable ASCII
+    // Clamp to 127 (max signed char value) to prevent overflow with high ratings
+    int charValue = rating[employee] + 33;
+    if (charValue > 127) {
+        charValue = 127; // Clamp to max valid signed char value
+    }
+    char ratingChar = char(charValue);
     dfsString += ratingChar;
 
     // Visit all subordinates
