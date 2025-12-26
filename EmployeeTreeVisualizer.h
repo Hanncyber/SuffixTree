@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QPainter>
 #include <QScrollArea>
-#include <vector>
+
 #include <map>
 
 struct EmployeeNodePosition {
