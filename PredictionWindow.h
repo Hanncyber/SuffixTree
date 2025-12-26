@@ -26,19 +26,19 @@ private slots:
 
 private:
     void setupUI();
-    
+
     QVBoxLayout *mainLayout;
     QLabel *titleLabel;
     QLineEdit *textInput;
     QPushButton *buildButton;
     QLineEdit *prefixInput;
-    QSpinBox *thresholdInput;
+    QSpinBox *maxSuggestionsInput;
     QPushButton *predictButton;
     QTextEdit *resultText;
     QPushButton *backButton;
     QScrollArea *scrollArea;
     TreeVisualizer *treeVisualizer;
-    
+
     SuffixTree *tree;
     QWidget *parentWindow;
 };

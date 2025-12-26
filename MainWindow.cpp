@@ -229,7 +229,7 @@ QWidget* MainWindow::createHomeWidget()
     // imageLabel->setAlignment(Qt::AlignCenter);
     // imageLabel->setText("Suffix Tree\nImage");
     // imageLabel->setFont(QFont("Arial", 14, QFont::Bold));
-    QPixmap pix("g712.png");   // or "C:/path/to/image.png"
+    QPixmap pix("D:/g712.png");   // or "C:/path/to/image.png"
     imageLabel->setPixmap(pix);
     
     QHBoxLayout *imageLayout = new QHBoxLayout();
@@ -278,11 +278,10 @@ QWidget* MainWindow::createHomeWidget()
     <li><b>Fast Pattern Matching:</b> Find all occurrences of a pattern in O(m) time where m is the pattern length</li>
     <li><b>Longest Repeated Substring:</b> Identify the longest substring that appears more than once</li>
     <li><b>Auto-completion:</b> Generate predictions based on prefix matching</li>
-    <li><b>DNA Analysis:</b> Detect mutations and analyze genetic sequences</li>
 </ul>
 
 <h3 style="color: #8E7FD1;">Applications:</h3>
-<p>Suffix trees are used in bioinformatics, text compression, data mining, and many other fields requiring efficient string processing.</p>
+<p>Suffix trees are used in text compression, data mining, and many other fields requiring efficient string processing.</p>
 
 <p style="margin-top: 20px; font-style: italic; color: #9F91D8;">Use the sidebar navigation to explore different suffix tree operations.</p>
     )";

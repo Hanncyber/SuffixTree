@@ -98,7 +98,7 @@ void EmployeeRating::dfs(int employee) {
 
     // Add this employee's rating to the dfsString
     // We map ratings to characters using offset 1-127
-    char ratingChar = static_cast<char>(rating[employee] + 33); // 33 to stay in printable ASCII
+    char ratingChar = char((rating[employee] + 33)); // 33 to stay in printable ASCII
     dfsString += ratingChar;
 
     // Visit all subordinates
