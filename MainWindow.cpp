@@ -36,7 +36,6 @@ void MainWindow::setupUI()
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
-    // Set main stylesheet
     this->setStyleSheet(R"(
         QWidget {
             background-color: #1A1A1A;
@@ -51,7 +50,6 @@ void MainWindow::setupUI()
     createSidebar();
     createContentArea();
 
-    // Create toggle button that stays visible
     toggleButton = new QPushButton("◀", centralWidget);
     toggleButton->setFixedSize(35, 50);
     toggleButton->setStyleSheet(R"(
@@ -73,7 +71,6 @@ void MainWindow::setupUI()
 
     connect(toggleButton, &QPushButton::clicked, this, &MainWindow::toggleSidebar);
 
-    // Show home view by default
     showHomeView();
 }
 
@@ -92,9 +89,8 @@ void MainWindow::createSidebar()
     sidebarLayout->setSpacing(5);
     sidebarLayout->setContentsMargins(10, 10, 10, 10);
 
-    sidebarLayout->addSpacing(45);  // Space for toggle button
+    sidebarLayout->addSpacing(45);
 
-    // Button style for sidebar buttons
     QString buttonStyle = R"(
         QPushButton {
             background-color: #3A3A3A;
@@ -175,7 +171,6 @@ void MainWindow::createSidebar()
 
     mainLayout->addWidget(sidebar);
 
-    // Connect signals
     connect(homeButton, &QPushButton::clicked, this, &MainWindow::showHomeView);
     connect(searchButton, &QPushButton::clicked, this, &MainWindow::showSearchView);
     connect(patternButton, &QPushButton::clicked, this, &MainWindow::showPatternView);
@@ -189,11 +184,9 @@ void MainWindow::createContentArea()
     contentStack = new QStackedWidget(this);
     contentStack->setStyleSheet("background-color: #1A1A1A;");
     
-    // Create home widget
     homeWidget = createHomeWidget();
     contentStack->addWidget(homeWidget);
 
-    // Create feature windows as embedded widgets
     searchWindow = new SearchWindow();
     contentStack->addWidget(searchWindow);
 
@@ -216,19 +209,9 @@ QWidget* MainWindow::createHomeWidget()
     layout->setContentsMargins(40, 30, 40, 30);
     layout->setSpacing(20);
 
-    // Image placeholder at top center
     QLabel *imageLabel = new QLabel(home);
     imageLabel->setFixedSize(200, 200);
-    // imageLabel->setStyleSheet(R"(
-    //     QLabel {
-    //         background-color: #7C6DB0;
-    //         border: 3px solid #9F91D8;
-    //         border-radius: 15px;
-    //     }
-    // )");
-    // imageLabel->setAlignment(Qt::AlignCenter);
-    // imageLabel->setText("Suffix Tree\nImage");
-    // imageLabel->setFont(QFont("Arial", 14, QFont::Bold));
+
     QPixmap pix("D:/g712.png");   // or "C:/path/to/image.png"
     imageLabel->setPixmap(pix);
     
@@ -240,7 +223,6 @@ QWidget* MainWindow::createHomeWidget()
 
     layout->addSpacing(20);
 
-    // Title
     QLabel *titleLabel = new QLabel("Welcome to Suffix Tree Applications", home);
     QFont titleFont;
     titleFont.setFamily("Verdana");
@@ -253,7 +235,6 @@ QWidget* MainWindow::createHomeWidget()
 
     layout->addSpacing(10);
 
-    // Explanation text
     QTextEdit *textEdit = new QTextEdit(home);
     textEdit->setReadOnly(true);
     textEdit->setStyleSheet(R"(

@@ -5,10 +5,10 @@
 #include <algorithm>
 
 const int TreeVisualizer::NODE_RADIUS = 16;
-const int TreeVisualizer::VERTICAL_SPACING = 120;  // slightly more vertical space
-const int TreeVisualizer::MIN_HORIZONTAL_SPACING = 50; // increased min horizontal space
+const int TreeVisualizer::VERTICAL_SPACING = 120;
+const int TreeVisualizer::MIN_HORIZONTAL_SPACING = 50;
 
-// ----------------- Constructor -----------------
+
 TreeVisualizer::TreeVisualizer(SuffixNode* root,
                                const std::string& text,
                                QWidget *parent)
@@ -20,7 +20,7 @@ TreeVisualizer::TreeVisualizer(SuffixNode* root,
     calculatePositions();
 }
 
-// ----------------- Update tree -----------------
+
 void TreeVisualizer::setTree(SuffixNode* root, const std::string& text) {
     rootNode = root;
     treeText = text;
@@ -29,7 +29,7 @@ void TreeVisualizer::setTree(SuffixNode* root, const std::string& text) {
     update();
 }
 
-// ----------------- Calculate positions -----------------
+
 void TreeVisualizer::calculatePositions() {
     if (!rootNode) return;
 
@@ -37,14 +37,12 @@ void TreeVisualizer::calculatePositions() {
     QFontMetrics fm(font());
     int totalWidth = calculateSubtreePositions(rootNode, 0, 0, fm);
 
-    // Find min/max X
     int minX = INT_MAX, maxX = INT_MIN;
     for (auto& it : nodePositions) {
         minX = std::min(minX, it.second.x);
         maxX = std::max(maxX, it.second.x);
     }
 
-    // Shift tree so leftmost node is at 20px
     int shiftX = 20 - minX;
     for (auto& it : nodePositions) it.second.x += shiftX;
 
@@ -52,7 +50,7 @@ void TreeVisualizer::calculatePositions() {
     setMinimumSize(std::max(maxX - minX + 60, 800), treeHeight);
 }
 
-// ----------------- Get tree depth -----------------
+
 int TreeVisualizer::getTreeDepth(SuffixNode* node) {
     if (!node) return 0;
     int maxChildDepth = 0;
@@ -62,7 +60,7 @@ int TreeVisualizer::getTreeDepth(SuffixNode* node) {
     return 1 + maxChildDepth;
 }
 
-// ----------------- Recursive layout -----------------
+
 int TreeVisualizer::calculateSubtreePositions(SuffixNode* node, int xOffset, int depth, QFontMetrics &fm) {
     if (!node) return 0;
 
@@ -94,7 +92,7 @@ int TreeVisualizer::calculateSubtreePositions(SuffixNode* node, int xOffset, int
     return subtreeWidth;
 }
 
-// ----------------- Paint event -----------------
+
 void TreeVisualizer::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -112,7 +110,6 @@ void TreeVisualizer::paintEvent(QPaintEvent*) {
         return;
     }
 
-    // Draw edges first
     painter.setPen(QPen(QColor("#C8A2F7"), 1));
     for (const auto& it : nodePositions) {
         SuffixNode* node = it.first;
@@ -130,13 +127,11 @@ void TreeVisualizer::paintEvent(QPaintEvent*) {
         }
     }
 
-    // Draw nodes on top
     for (const auto& it : nodePositions) {
         drawNode(painter, it.first, it.second.x, it.second.y);
     }
 }
 
-// ----------------- Draw node -----------------
 void TreeVisualizer::drawNode(QPainter& painter,
                               SuffixNode* node,
                               int x,
@@ -156,7 +151,6 @@ void TreeVisualizer::drawNode(QPainter& painter,
     }
 }
 
-// ----------------- Draw curved edge -----------------
 void TreeVisualizer::drawEdge(QPainter& painter,
                               int x1, int y1,
                               int x2, int y2,
@@ -177,7 +171,7 @@ void TreeVisualizer::drawEdge(QPainter& painter,
     }
 }
 
-// ----------------- Edge label -----------------
+
 QString TreeVisualizer::getEdgeLabel(SuffixNode* node) {
     if (!node || node->start < 0) return "";
 
@@ -191,7 +185,7 @@ QString TreeVisualizer::getEdgeLabel(SuffixNode* node) {
     return QString::fromStdString(treeText.substr(start, len));
 }
 
-// ----------------- Size hint -----------------
+
 QSize TreeVisualizer::sizeHint() const {
     return QSize(width(), treeHeight);
 }

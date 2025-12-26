@@ -9,7 +9,6 @@ SOURCES += \
     main_gui.cpp \
     MainWindow.cpp \
     SearchWindow.cpp \
-    MutationWindow.cpp \
     PatternWindow.cpp \
     PredictionWindow.cpp \
     TreeVisualizer.cpp \
@@ -21,7 +20,6 @@ SOURCES += \
 HEADERS += \
     MainWindow.h \
     SearchWindow.h \
-    MutationWindow.h \
     PatternWindow.h \
     PredictionWindow.h \
     TreeVisualizer.h \

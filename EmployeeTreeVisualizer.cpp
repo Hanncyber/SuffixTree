@@ -4,30 +4,25 @@
 #include <QFontMetrics>
 #include <algorithm>
 
-// ----------------- static constants -----------------
 const int EmployeeTreeVisualizer::NODE_WIDTH = 60;
 const int EmployeeTreeVisualizer::NODE_HEIGHT = 50;
 const int EmployeeTreeVisualizer::VERTICAL_SPACING = 100;
 const int EmployeeTreeVisualizer::MIN_HORIZONTAL_SPACING = 80;
 
-// ----------------- Constructor -----------------
 EmployeeTreeVisualizer::EmployeeTreeVisualizer(QWidget *parent)
     : QWidget(parent),
-      numEmployees(0),
-      employeeTree(nullptr),
-      childCount(nullptr),
-      employeeRating(nullptr),
-      treeWidth(0),
-      treeHeight(0)
+    numEmployees(0),
+    employeeTree(nullptr),
+    childCount(nullptr),
+    employeeRating(nullptr),
+    treeWidth(0),
+    treeHeight(0)
 {
     setMinimumSize(800, 600);
 }
 
-// ----------------- Update employee data -----------------
 void EmployeeTreeVisualizer::setEmployeeData(int numEmployees, int* const* tree, const int* childCount, const int* rating) {
-    // Validate input parameters
     if (numEmployees <= 0 || !tree || !childCount || !rating) {
-        // Invalid data, clear everything
         this->numEmployees = 0;
         this->employeeTree = nullptr;
         this->childCount = nullptr;
@@ -36,7 +31,7 @@ void EmployeeTreeVisualizer::setEmployeeData(int numEmployees, int* const* tree,
         update();
         return;
     }
-    
+
     this->numEmployees = numEmployees;
     this->employeeTree = tree;
     this->childCount = childCount;
@@ -60,7 +55,6 @@ void EmployeeTreeVisualizer::clear() {
     update();
 }
 
-// ----------------- Calculate positions -----------------
 void EmployeeTreeVisualizer::calculatePositions() {
     if (numEmployees == 0 || !employeeTree) {
         treeWidth = 0;
@@ -69,38 +63,33 @@ void EmployeeTreeVisualizer::calculatePositions() {
     }
 
     nodePositions.clear();
-    
-    // Start from root (employee index 0 = 'H')
+
     int totalWidth = calculateSubtreePositions(0, 0);
-    
-    // Calculate center position based on total width (use a minimum width for small trees)
-    int centerX = std::max(400, totalWidth / 2);
-    
-    // Shift tree to center
+
     for (auto& it : nodePositions) {
-        it.second.x += centerX;
+        it.second.x += 50;
     }
-    
+
+    treeWidth = totalWidth + 100;
     treeHeight = 600;
-    setMinimumSize(std::max(800, totalWidth + 100), treeHeight);
+
+    setMinimumSize(treeWidth, treeHeight);
+    resize(treeWidth, treeHeight);
 }
 
-// ----------------- Recursive layout -----------------
 int EmployeeTreeVisualizer::calculateSubtreePositions(int employeeIndex, int xOffset, int depth) {
     if (employeeIndex < 0 || employeeIndex >= numEmployees) return 0;
     if (!employeeTree || !childCount || !employeeRating) return 0;
 
     std::vector<int> children;
     int numChildren = childCount[employeeIndex];
-    
-    // Validate childCount is reasonable
+
     if (numChildren < 0 || numChildren >= numEmployees) {
-        return MIN_HORIZONTAL_SPACING; // Invalid child count, treat as leaf
+        return MIN_HORIZONTAL_SPACING;
     }
-    
+
     for (int i = 0; i < numChildren; ++i) {
         int childIndex = employeeTree[employeeIndex][i];
-        // Validate child index before adding
         if (childIndex >= 0 && childIndex < numEmployees) {
             children.push_back(childIndex);
         }
@@ -133,7 +122,6 @@ int EmployeeTreeVisualizer::calculateSubtreePositions(int employeeIndex, int xOf
             indexToChar(employeeIndex),
             employeeRating[employeeIndex]
         };
-        
         for (int child : children) {
             nodePositions[child].y = 40 + (depth + 1) * VERTICAL_SPACING;
         }
@@ -142,11 +130,10 @@ int EmployeeTreeVisualizer::calculateSubtreePositions(int employeeIndex, int xOf
     return subtreeWidth;
 }
 
-// ----------------- Paint event -----------------
 void EmployeeTreeVisualizer::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(rect(), QColor(250, 250, 255)); // Light blue background
+    painter.fillRect(rect(), QColor(250, 250, 255));
 
     if (numEmployees == 0 || !employeeTree) {
         painter.setPen(Qt::gray);
@@ -160,8 +147,6 @@ void EmployeeTreeVisualizer::paintEvent(QPaintEvent*) {
     QFont mono("Consolas");
     mono.setPointSize(10);
     painter.setFont(mono);
-
-    // Draw edges first
     for (const auto& it : nodePositions) {
         int employeeIndex = it.first;
         const EmployeeNodePosition& pos = it.second;
@@ -177,44 +162,37 @@ void EmployeeTreeVisualizer::paintEvent(QPaintEvent*) {
         }
     }
 
-    // Draw nodes on top
     for (const auto& it : nodePositions) {
         const EmployeeNodePosition& pos = it.second;
         drawNode(painter, pos.x, pos.y, pos.employeeLabel, pos.rating, it.first == 0);
     }
 }
 
-// ----------------- Draw node -----------------
 void EmployeeTreeVisualizer::drawNode(QPainter& painter, int x, int y, char label, int rating, bool isRoot) {
     int halfWidth = NODE_WIDTH / 2;
     int halfHeight = NODE_HEIGHT / 2;
-    
-    // Choose color based on whether it's root
-    QColor nodeColor = isRoot ? QColor(155, 89, 182) : QColor(52, 152, 219); // Purple for root, blue for others
-    
-    // Draw rounded rectangle for node
+
+    QColor nodeColor = isRoot ? QColor(155, 89, 182) : QColor(52, 152, 219);
+
     painter.setBrush(nodeColor);
     painter.setPen(QPen(Qt::black, 2));
     painter.drawRoundedRect(x - halfWidth, y - halfHeight, NODE_WIDTH, NODE_HEIGHT, 8, 8);
-    
-    // Draw employee label
+
     painter.setPen(Qt::white);
     QFont labelFont = painter.font();
     labelFont.setBold(true);
     labelFont.setPointSize(14);
     painter.setFont(labelFont);
-    painter.drawText(QRect(x - halfWidth, y - halfHeight, NODE_WIDTH, NODE_HEIGHT / 2 + 5), 
+    painter.drawText(QRect(x - halfWidth, y - halfHeight, NODE_WIDTH, NODE_HEIGHT / 2 + 5),
                      Qt::AlignCenter, QString(label));
-    
-    // Draw rating
+
     labelFont.setPointSize(10);
     labelFont.setBold(false);
     painter.setFont(labelFont);
-    painter.drawText(QRect(x - halfWidth, y - halfHeight + NODE_HEIGHT / 2 - 5, NODE_WIDTH, NODE_HEIGHT / 2 + 5), 
+    painter.drawText(QRect(x - halfWidth, y - halfHeight + NODE_HEIGHT / 2 - 5, NODE_WIDTH, NODE_HEIGHT / 2 + 5),
                      Qt::AlignCenter, QString("R: %1").arg(rating));
 }
 
-// ----------------- Draw edge -----------------
 void EmployeeTreeVisualizer::drawEdge(QPainter& painter, int x1, int y1, int x2, int y2) {
     QPainterPath path;
     path.moveTo(x1, y1 + NODE_HEIGHT / 2);
@@ -224,15 +202,13 @@ void EmployeeTreeVisualizer::drawEdge(QPainter& painter, int x1, int y1, int x2,
     painter.drawPath(path);
 }
 
-// ----------------- Index to character -----------------
 char EmployeeTreeVisualizer::indexToChar(int index) const {
-    if (index < 0 || index >= numEmployees) return '?'; // Invalid index
+    if (index < 0 || index >= numEmployees) return '?';
     if (index == 0) return 'H';
-    if (index >= 27) return '?'; // Beyond 'Z', should not happen with valid employee counts
+    if (index >= 27) return '?';
     return 'A' + index - 1;
 }
 
-// ----------------- Size hint -----------------
 QSize EmployeeTreeVisualizer::sizeHint() const {
-    return QSize(width(), treeHeight);
+    return QSize(treeWidth, treeHeight);
 }

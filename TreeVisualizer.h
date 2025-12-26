@@ -39,7 +39,6 @@ private:
     int treeWidth;
     int treeHeight;
 
-    // remove initialization here
     static const int NODE_RADIUS;
     static const int VERTICAL_SPACING;
     static const int MIN_HORIZONTAL_SPACING;
