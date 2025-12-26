@@ -229,7 +229,7 @@ QWidget* MainWindow::createHomeWidget()
     // imageLabel->setAlignment(Qt::AlignCenter);
     // imageLabel->setText("Suffix Tree\nImage");
     // imageLabel->setFont(QFont("Arial", 14, QFont::Bold));
-    QPixmap pix("D:/g712.png");   // or "C:/path/to/image.png"
+    QPixmap pix("g712.png");   // or "C:/path/to/image.png"
     imageLabel->setPixmap(pix);
     
     QHBoxLayout *imageLayout = new QHBoxLayout();
