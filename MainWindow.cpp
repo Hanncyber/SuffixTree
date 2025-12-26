@@ -111,7 +111,7 @@ void MainWindow::createSidebar()
         QPushButton:pressed {
             background-color: #6B5AA6;
         }
-    )");
+    )";
 
     // Home button
     homeButton = new QPushButton("Home", sidebar);
@@ -219,16 +219,18 @@ QWidget* MainWindow::createHomeWidget()
     // Image placeholder at top center
     QLabel *imageLabel = new QLabel(home);
     imageLabel->setFixedSize(200, 200);
-    imageLabel->setStyleSheet(R"(
-        QLabel {
-            background-color: #7C6DB0;
-            border: 3px solid #9F91D8;
-            border-radius: 15px;
-        }
-    )");
-    imageLabel->setAlignment(Qt::AlignCenter);
-    imageLabel->setText("Suffix Tree\nImage");
-    imageLabel->setFont(QFont("Arial", 14, QFont::Bold));
+    // imageLabel->setStyleSheet(R"(
+    //     QLabel {
+    //         background-color: #7C6DB0;
+    //         border: 3px solid #9F91D8;
+    //         border-radius: 15px;
+    //     }
+    // )");
+    // imageLabel->setAlignment(Qt::AlignCenter);
+    // imageLabel->setText("Suffix Tree\nImage");
+    // imageLabel->setFont(QFont("Arial", 14, QFont::Bold));
+    QPixmap pix("D:/g712.png");   // or "C:/path/to/image.png"
+    imageLabel->setPixmap(pix);
     
     QHBoxLayout *imageLayout = new QHBoxLayout();
     imageLayout->addStretch();
