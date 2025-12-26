@@ -1,0 +1,218 @@
+# Main Window - Final Design Visual
+
+```
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                      SUFFIX TREE APPLICATIONS                                 ║
+║                         Main Window Design                                    ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 800px ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                               ┃
+┃  ╔═══════╗                                                                    ┃
+┃  ║       ║                                                                    ┃
+┃  ║ LOGO  ║   Suffix Tree apps                                                ┃
+┃  ║       ║                                                                    ┃
+┃  ╚═══════╝                                                                    ┃
+┃  80x80px   (Verdana 28pt Bold)                                               ┃
+┃                                                                               ┃
+┃                                                                               ┃
+┃                                                                               ┃
+┃                     ╔═══════════════╗       ╔═══════════════╗                ┃
+┃                     ║               ║       ║               ║                ┃
+┃                     ║      🔍       ║       ║      🔄       ║                ┃
+┃                     ║               ║       ║               ║                ┃
+┃                     ║    Search     ║       ║   Longest     ║                ┃
+┃                     ║    Pattern    ║       ║   Repeated    ║                ┃
+┃                     ║               ║       ║               ║                ┃
+┃                     ╚═══════════════╝       ╚═══════════════╝                ┃
+┃                        150x150px               150x150px                     ┃
+┃                                                                               ┃
+┃                                                                               ┃
+┃                                                                               ┃
+┃                     ╔═══════════════╗       ╔═══════════════╗                ┃
+┃                     ║               ║       ║               ║                ┃
+┃                     ║      💡       ║       ║      👥       ║                ┃
+┃                     ║               ║       ║               ║                ┃
+┃                     ║   Predict     ║       ║   Employee    ║                ┃
+┃                     ║  Completion   ║       ║    Rating     ║                ┃
+┃                     ║               ║       ║               ║                ┃
+┃                     ╚═══════════════╝       ╚═══════════════╝                ┃
+┃                        150x150px               150x150px                     ┃
+┃                                                                               ┃
+┃                                                                               ┃
+┃                                                                               ┃
+┃                                                                               ┃
+┃                                                                               ┃
+┃                                                       ┏━━━━━━━━━━━━━┓        ┃
+┃                                                       ┃     Exit    ┃        ┃
+┃                                                       ┗━━━━━━━━━━━━━┛        ┃
+┃                                                         120x45px             ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+                                  600px
+
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                              COLOR LEGEND                                     ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+█████  Dark Background (#1A1A1A)
+█████  Purple Buttons (#7C6DB0)
+█████  Red Exit Button (#B91C1C)
+█████  White Text (#FFFFFF)
+█████  Light Gray Labels (#EDEDED)
+
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                          COMPONENT BREAKDOWN                                  ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+┌─ HEADER ──────────────────────────────────────────────────────────────────────┐
+│                                                                                │
+│  Component 1: Logo Placeholder                                                │
+│  ├─ Type: QLabel                                                              │
+│  ├─ Size: 80x80 pixels                                                        │
+│  ├─ Background: Purple (#7C6DB0)                                              │
+│  ├─ Border: 2px solid #9F91D8                                                 │
+│  ├─ Border Radius: 10px                                                       │
+│  └─ Content: "LOGO" text (placeholder)                                        │
+│                                                                                │
+│  Component 2: Title                                                            │
+│  ├─ Type: QLabel                                                              │
+│  ├─ Text: "Suffix Tree apps"                                                 │
+│  ├─ Font: Verdana, 28pt, Bold                                                │
+│  ├─ Color: Light Gray (#EDEDED)                                              │
+│  └─ Alignment: Left with vertical center                                      │
+│                                                                                │
+└────────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─ MAIN CONTENT (4 Buttons) ────────────────────────────────────────────────────┐
+│                                                                                │
+│  Layout: QGridLayout (2 rows × 2 columns)                                    │
+│  Spacing: 40px horizontal, 40px vertical                                      │
+│                                                                                │
+│  ┌─ Button 1 (Row 0, Col 0) ───────────────────────────────────────────────┐ │
+│  │ Icon: 🔍                                                                  │ │
+│  │ Text: "Search\nPattern"                                                  │ │
+│  │ Action: Opens SearchWindow                                               │ │
+│  └───────────────────────────────────────────────────────────────────────────┘ │
+│                                                                                │
+│  ┌─ Button 2 (Row 0, Col 1) ───────────────────────────────────────────────┐ │
+│  │ Icon: 🔄                                                                  │ │
+│  │ Text: "Longest\nRepeated"                                                │ │
+│  │ Action: Opens PatternWindow                                              │ │
+│  └───────────────────────────────────────────────────────────────────────────┘ │
+│                                                                                │
+│  ┌─ Button 3 (Row 1, Col 0) ───────────────────────────────────────────────┐ │
+│  │ Icon: 💡                                                                  │ │
+│  │ Text: "Predict\nCompletion"                                              │ │
+│  │ Action: Opens PredictionWindow                                           │ │
+│  └───────────────────────────────────────────────────────────────────────────┘ │
+│                                                                                │
+│  ┌─ Button 4 (Row 1, Col 1) ───────────────────────────────────────────────┐ │
+│  │ Icon: 👥                                                                  │ │
+│  │ Text: "Employee\nRating"                                                 │ │
+│  │ Action: Opens EmployeeRatingWindow                                       │ │
+│  └───────────────────────────────────────────────────────────────────────────┘ │
+│                                                                                │
+│  All Buttons:                                                                  │
+│  ├─ Size: 150x150 pixels                                                      │
+│  ├─ Shape: Circular (border-radius: 75px)                                     │
+│  ├─ Background: Purple (#7C6DB0)                                              │
+│  ├─ Border: 3px solid #9F91D8                                                 │
+│  ├─ Font: Arial, 12pt, DemiBold                                               │
+│  ├─ Hover: Background → #8E7FD1                                               │
+│  ├─ Hover: Border → #B5A7E8                                                   │
+│  └─ Press: Background → #6B5AA6                                               │
+│                                                                                │
+└────────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─ FOOTER ──────────────────────────────────────────────────────────────────────┐
+│                                                                                │
+│  Component: Exit Button                                                        │
+│  ├─ Type: QPushButton                                                         │
+│  ├─ Size: 120x45 pixels                                                       │
+│  ├─ Position: Bottom right corner                                             │
+│  ├─ Background: Red (#B91C1C)                                                 │
+│  ├─ Border Radius: 8px                                                        │
+│  ├─ Font: Arial, 14pt, Bold                                                   │
+│  ├─ Hover: Background → #DC2626                                               │
+│  ├─ Press: Background → #991B1B                                               │
+│  └─ Action: Closes application (QApplication::quit())                         │
+│                                                                                │
+└────────────────────────────────────────────────────────────────────────────────┘
+
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                          INTERACTION DIAGRAM                                  ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+                            Main Window
+                                 │
+                ┌────────────────┼────────────────┐
+                │                │                │
+                ▼                ▼                ▼
+         ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+         │   Search    │  │   Longest   │  │   Predict   │
+         │   Pattern   │  │  Repeated   │  │ Completion  │
+         │             │  │             │  │             │
+         │ SearchWindow│  │PatternWindow│  │PredictionWin│
+         └─────────────┘  └─────────────┘  └─────────────┘
+                │
+                ▼
+         ┌─────────────┐
+         │  Employee   │
+         │   Rating    │
+         │             │
+         │EmployeeWin  │
+         └─────────────┘
+
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                        RESPONSIVE BEHAVIOR                                    ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+State: NORMAL
+├─ All buttons: Purple (#7C6DB0)
+├─ Exit button: Red (#B91C1C)
+└─ Cursor: Default arrow
+
+State: HOVER (over main buttons)
+├─ Button background: Light Purple (#8E7FD1)
+├─ Button border: Lighter Purple (#B5A7E8)
+└─ Cursor: Pointing hand
+
+State: HOVER (over exit button)
+├─ Button background: Bright Red (#DC2626)
+└─ Cursor: Pointing hand
+
+State: PRESSED (main buttons)
+├─ Button background: Dark Purple (#6B5AA6)
+└─ Visual feedback: Darker color
+
+State: PRESSED (exit button)
+├─ Button background: Darker Red (#991B1B)
+└─ Visual feedback: Darker color
+
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                      REQUIREMENTS CHECKLIST ✓                                 ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+✓ Image placeholder for logo at top left of screen
+✓ Text "Suffix Tree apps" right beside the logo
+✓ 4 round buttons beneath the header
+✓ Each button contains an icon for its purpose
+✓ Exit button in bottom right corner
+✓ Professional, modern design
+✓ Consistent styling and color scheme
+✓ Interactive hover and press effects
+✓ Proper spacing and alignment
+✓ Clean code structure with Qt best practices
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                         IMPLEMENTATION COMPLETE! 🎉
+═══════════════════════════════════════════════════════════════════════════════

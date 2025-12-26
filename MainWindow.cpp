@@ -7,90 +7,159 @@
 
 #include <QApplication>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QFont>
 #include <QWidget>
-#include <QList>
+#include <QStackedWidget>
+#include <QScrollArea>
+#include <QTextEdit>
+#include <QPropertyAnimation>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent), sidebarVisible(true)
 {
     setupUI();
     setWindowTitle("Suffix Tree Applications");
-    resize(620, 460);
+    resize(1200, 700);
 }
 
 MainWindow::~MainWindow() {}
 
 void MainWindow::setupUI()
 {
-    QWidget *centralWidget = new QWidget(this);
+    centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
-    mainLayout->setSpacing(14);
-    mainLayout->setContentsMargins(40, 35, 40, 35);
+    mainLayout = new QHBoxLayout(centralWidget);
+    mainLayout->setSpacing(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
 
+    // Set main stylesheet
     this->setStyleSheet(R"(
         QWidget {
-            background-color: #1A1A1A;   /* lighter dark background */
+            background-color: #1A1A1A;
             font-family: Arial;
         }
-
+        
         QLabel {
             color: #EDEDED;
         }
+    )");
 
+    createSidebar();
+    createContentArea();
+
+    // Create toggle button that stays visible
+    toggleButton = new QPushButton("◀", centralWidget);
+    toggleButton->setFixedSize(35, 50);
+    toggleButton->setStyleSheet(R"(
         QPushButton {
-            background-color: #7C6DB0;   /* lilac */
-            color: #FFFFFF;
-            border: 1px solid #9F91D8;
-            border-radius: 6px;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: 500;
+            background-color: #3A3A3A;
+            border: none;
+            border-radius: 5px;
+            color: #EDEDED;
+            font-size: 18px;
+            font-weight: bold;
         }
-
         QPushButton:hover {
-            background-color: #8E7FD1;
+            background-color: #4A4A4A;
         }
+    )");
+    toggleButton->setCursor(Qt::PointingHandCursor);
+    toggleButton->move(220, 10);
+    toggleButton->raise();
 
-        QPushButton:pressed {
-            background-color: #6B5AA6;
+    connect(toggleButton, &QPushButton::clicked, this, &MainWindow::toggleSidebar);
+
+    // Show home view by default
+    showHomeView();
+}
+
+void MainWindow::createSidebar()
+{
+    sidebar = new QWidget(this);
+    sidebar->setFixedWidth(220);
+    sidebar->setStyleSheet(R"(
+        QWidget {
+            background-color: #2A2A2A;
+            border-right: 1px solid #3A3A3A;
         }
     )");
 
-    QLabel *titleLabel = new QLabel("Suffix Tree Applications", this);
-    QFont titleFont;
-    titleFont.setFamily("Verdana");
-    titleFont.setPointSize(26);
-    titleFont.setWeight(QFont::DemiBold);
-    titleLabel->setFont(titleFont);
-    titleLabel->setAlignment(Qt::AlignCenter);
-    mainLayout->addWidget(titleLabel);
+    sidebarLayout = new QVBoxLayout(sidebar);
+    sidebarLayout->setSpacing(5);
+    sidebarLayout->setContentsMargins(10, 10, 10, 10);
 
-    mainLayout->addSpacing(20);
-    QPushButton *searchBtn   = new QPushButton("Search Pattern", this);
-    QPushButton *patternBtn  = new QPushButton("Longest Repeated Pattern", this);
-    QPushButton *predictBtn  = new QPushButton("Predict Completions", this);
-    QPushButton *employeeBtn = new QPushButton("Employee Rating System", this);
-    QPushButton *exitBtn     = new QPushButton("Exit", this);
+    sidebarLayout->addSpacing(45);  // Space for toggle button
 
-    QList<QPushButton*> buttons = {
-        searchBtn, patternBtn, predictBtn, employeeBtn, exitBtn
-    };
+    // Button style for sidebar buttons
+    QString buttonStyle = R"(
+        QPushButton {
+            background-color: #3A3A3A;
+            border: none;
+            border-radius: 8px;
+            color: #EDEDED;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+        QPushButton:hover {
+            background-color: #7C6DB0;
+        }
+        QPushButton:pressed {
+            background-color: #6B5AA6;
+        }
+    )";
 
-    for (QPushButton *btn : buttons) {
-        btn->setMinimumHeight(48);
-        btn->setCursor(Qt::PointingHandCursor);
-        mainLayout->addWidget(btn);
-    }
-    exitBtn->setStyleSheet(R"(
+    // Home button
+    homeButton = new QPushButton("Home", sidebar);
+    homeButton->setStyleSheet(buttonStyle);
+    homeButton->setMinimumHeight(45);
+    homeButton->setCursor(Qt::PointingHandCursor);
+    sidebarLayout->addWidget(homeButton);
+
+    sidebarLayout->addSpacing(10);
+
+    // Navigation buttons
+    searchButton = new QPushButton("Search Pattern", sidebar);
+    searchButton->setStyleSheet(buttonStyle);
+    searchButton->setMinimumHeight(45);
+    searchButton->setCursor(Qt::PointingHandCursor);
+    sidebarLayout->addWidget(searchButton);
+
+    patternButton = new QPushButton("Longest Repeated", sidebar);
+    patternButton->setStyleSheet(buttonStyle);
+    patternButton->setMinimumHeight(45);
+    patternButton->setCursor(Qt::PointingHandCursor);
+    sidebarLayout->addWidget(patternButton);
+
+    predictionButton = new QPushButton("Predict Completions", sidebar);
+    predictionButton->setStyleSheet(buttonStyle);
+    predictionButton->setMinimumHeight(45);
+    predictionButton->setCursor(Qt::PointingHandCursor);
+    sidebarLayout->addWidget(predictionButton);
+
+    employeeRatingButton = new QPushButton("Employee Rating", sidebar);
+    employeeRatingButton->setStyleSheet(buttonStyle);
+    employeeRatingButton->setMinimumHeight(45);
+    employeeRatingButton->setCursor(Qt::PointingHandCursor);
+    sidebarLayout->addWidget(employeeRatingButton);
+
+    sidebarLayout->addStretch();
+
+    // Exit button at the bottom
+    exitButton = new QPushButton("Exit", sidebar);
+    exitButton->setStyleSheet(R"(
         QPushButton {
             background-color: #B91C1C;
             border: none;
+            border-radius: 8px;
             color: #FFFFFF;
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
             font-weight: 600;
         }
         QPushButton:hover {
@@ -100,49 +169,168 @@ void MainWindow::setupUI()
             background-color: #991B1B;
         }
     )");
+    exitButton->setMinimumHeight(45);
+    exitButton->setCursor(Qt::PointingHandCursor);
+    sidebarLayout->addWidget(exitButton);
 
-    mainLayout->addStretch();
-    connect(searchBtn,   &QPushButton::clicked, this, &MainWindow::openSearchWindow);
-    connect(patternBtn,  &QPushButton::clicked, this, &MainWindow::openPatternWindow);
-    connect(predictBtn,  &QPushButton::clicked, this, &MainWindow::openPredictionWindow);
-    connect(employeeBtn, &QPushButton::clicked, this, &MainWindow::openEmployeeRatingWindow);
-    connect(exitBtn,     &QPushButton::clicked, this, &MainWindow::exitApplication);
+    mainLayout->addWidget(sidebar);
+
+    // Connect signals
+    connect(homeButton, &QPushButton::clicked, this, &MainWindow::showHomeView);
+    connect(searchButton, &QPushButton::clicked, this, &MainWindow::showSearchView);
+    connect(patternButton, &QPushButton::clicked, this, &MainWindow::showPatternView);
+    connect(predictionButton, &QPushButton::clicked, this, &MainWindow::showPredictionView);
+    connect(employeeRatingButton, &QPushButton::clicked, this, &MainWindow::showEmployeeRatingView);
+    connect(exitButton, &QPushButton::clicked, this, &MainWindow::exitApplication);
 }
 
-void MainWindow::openSearchWindow()
+void MainWindow::createContentArea()
 {
-    SearchWindow *w = new SearchWindow();
-    w->setAttribute(Qt::WA_DeleteOnClose);
-    connect(w, &QWidget::destroyed, this, &QWidget::show);
-    hide();
-    w->show();
+    contentStack = new QStackedWidget(this);
+    contentStack->setStyleSheet("background-color: #1A1A1A;");
+    
+    // Create home widget
+    homeWidget = createHomeWidget();
+    contentStack->addWidget(homeWidget);
+
+    // Create feature windows as embedded widgets
+    searchWindow = new SearchWindow();
+    contentStack->addWidget(searchWindow);
+
+    patternWindow = new PatternWindow();
+    contentStack->addWidget(patternWindow);
+
+    predictionWindow = new PredictionWindow();
+    contentStack->addWidget(predictionWindow);
+
+    employeeRatingWindow = new EmployeeRatingWindow();
+    contentStack->addWidget(employeeRatingWindow);
+
+    mainLayout->addWidget(contentStack);
 }
 
-void MainWindow::openPatternWindow()
+QWidget* MainWindow::createHomeWidget()
 {
-    PatternWindow *w = new PatternWindow();
-    w->setAttribute(Qt::WA_DeleteOnClose);
-    connect(w, &QWidget::destroyed, this, &QWidget::show);
-    hide();
-    w->show();
+    QWidget *home = new QWidget();
+    QVBoxLayout *layout = new QVBoxLayout(home);
+    layout->setContentsMargins(40, 30, 40, 30);
+    layout->setSpacing(20);
+
+    // Image placeholder at top center
+    QLabel *imageLabel = new QLabel(home);
+    imageLabel->setFixedSize(200, 200);
+    // imageLabel->setStyleSheet(R"(
+    //     QLabel {
+    //         background-color: #7C6DB0;
+    //         border: 3px solid #9F91D8;
+    //         border-radius: 15px;
+    //     }
+    // )");
+    // imageLabel->setAlignment(Qt::AlignCenter);
+    // imageLabel->setText("Suffix Tree\nImage");
+    // imageLabel->setFont(QFont("Arial", 14, QFont::Bold));
+    QPixmap pix("D:/g712.png");   // or "C:/path/to/image.png"
+    imageLabel->setPixmap(pix);
+    
+    QHBoxLayout *imageLayout = new QHBoxLayout();
+    imageLayout->addStretch();
+    imageLayout->addWidget(imageLabel);
+    imageLayout->addStretch();
+    layout->addLayout(imageLayout);
+
+    layout->addSpacing(20);
+
+    // Title
+    QLabel *titleLabel = new QLabel("Welcome to Suffix Tree Applications", home);
+    QFont titleFont;
+    titleFont.setFamily("Verdana");
+    titleFont.setPointSize(24);
+    titleFont.setWeight(QFont::Bold);
+    titleLabel->setFont(titleFont);
+    titleLabel->setAlignment(Qt::AlignCenter);
+    titleLabel->setStyleSheet("color: #EDEDED;");
+    layout->addWidget(titleLabel);
+
+    layout->addSpacing(10);
+
+    // Explanation text
+    QTextEdit *textEdit = new QTextEdit(home);
+    textEdit->setReadOnly(true);
+    textEdit->setStyleSheet(R"(
+        QTextEdit {
+            background-color: #2A2A2A;
+            border: 1px solid #3A3A3A;
+            border-radius: 10px;
+            color: #EDEDED;
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    )");
+    
+    QString explanation = R"(
+<h2 style="color: #7C6DB0;">What is a Suffix Tree?</h2>
+
+<p>A suffix tree is a compressed trie containing all the suffixes of a given text as their keys and positions in the text as their values. It is a powerful data structure that enables efficient string operations.</p>
+
+<h3 style="color: #8E7FD1;">Key Features:</h3>
+<ul>
+    <li><b>Fast Pattern Matching:</b> Find all occurrences of a pattern in O(m) time where m is the pattern length</li>
+    <li><b>Longest Repeated Substring:</b> Identify the longest substring that appears more than once</li>
+    <li><b>Auto-completion:</b> Generate predictions based on prefix matching</li>
+    <li><b>DNA Analysis:</b> Detect mutations and analyze genetic sequences</li>
+</ul>
+
+<h3 style="color: #8E7FD1;">Applications:</h3>
+<p>Suffix trees are used in bioinformatics, text compression, data mining, and many other fields requiring efficient string processing.</p>
+
+<p style="margin-top: 20px; font-style: italic; color: #9F91D8;">Use the sidebar navigation to explore different suffix tree operations.</p>
+    )";
+    
+    textEdit->setHtml(explanation);
+    layout->addWidget(textEdit);
+
+    return home;
 }
 
-void MainWindow::openPredictionWindow()
+void MainWindow::toggleSidebar()
 {
-    PredictionWindow *w = new PredictionWindow();
-    w->setAttribute(Qt::WA_DeleteOnClose);
-    connect(w, &QWidget::destroyed, this, &QWidget::show);
-    hide();
-    w->show();
+    if (sidebarVisible) {
+        sidebar->setVisible(false);
+        toggleButton->setText("▶");
+        toggleButton->move(10, 10);
+        sidebarVisible = false;
+    } else {
+        sidebar->setVisible(true);
+        toggleButton->setText("◀");
+        toggleButton->move(220, 10);
+        sidebarVisible = true;
+    }
 }
 
-void MainWindow::openEmployeeRatingWindow()
+void MainWindow::showHomeView()
 {
-    EmployeeRatingWindow *w = new EmployeeRatingWindow();
-    w->setAttribute(Qt::WA_DeleteOnClose);
-    connect(w, &QWidget::destroyed, this, &QWidget::show);
-    hide();
-    w->show();
+    contentStack->setCurrentWidget(homeWidget);
+}
+
+void MainWindow::showSearchView()
+{
+    contentStack->setCurrentWidget(searchWindow);
+}
+
+void MainWindow::showPatternView()
+{
+    contentStack->setCurrentWidget(patternWindow);
+}
+
+void MainWindow::showPredictionView()
+{
+    contentStack->setCurrentWidget(predictionWindow);
+}
+
+void MainWindow::showEmployeeRatingView()
+{
+    contentStack->setCurrentWidget(employeeRatingWindow);
 }
 
 void MainWindow::exitApplication()

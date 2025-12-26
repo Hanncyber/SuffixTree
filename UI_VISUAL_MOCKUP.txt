@@ -1,0 +1,192 @@
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                         NEW MAIN WINDOW DESIGN                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────── 800px ────────────────────────────────────┐
+│                                                                               │
+│  ┏━━━━━━━┓                                                                   │ ↑
+│  ┃       ┃                                                                   │ │
+│  ┃ LOGO  ┃   Suffix Tree apps                                               │ │
+│  ┃       ┃                                                                   │ │
+│  ┗━━━━━━━┛                                                                   │ │
+│  (80x80)                                                                     │ │
+│                                                                               │ │
+│                                                                               │ │
+│                                                                               │ │
+│                          ╭─────────────╮       ╭─────────────╮              │ │
+│                         │      🔍      │       │      🔄      │              │ 600px
+│                         │              │       │              │              │ │
+│                         │   Search     │       │   Longest    │              │ │
+│                         │   Pattern    │       │   Repeated   │              │ │
+│                         │              │       │              │              │ │
+│                          ╰─────────────╯       ╰─────────────╯              │ │
+│                            (150x150)             (150x150)                   │ │
+│                                                                               │ │
+│                                                                               │ │
+│                          ╭─────────────╮       ╭─────────────╮              │ │
+│                         │      💡      │       │      👥      │              │ │
+│                         │              │       │              │              │ │
+│                         │   Predict    │       │   Employee   │              │ │
+│                         │  Completion  │       │    Rating    │              │ │
+│                         │              │       │              │              │ │
+│                          ╰─────────────╯       ╰─────────────╯              │ │
+│                            (150x150)             (150x150)                   │ │
+│                                                                               │ │
+│                                                                               │ │
+│                                                                               │ │
+│                                                                               │ │
+│                                                                               │ │
+│                                                         ┌──────────────┐     │ │
+│                                                         │     Exit     │     │ │
+│                                                         └──────────────┘     │ │
+│                                                           (120x45)           │ ↓
+└───────────────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                            DESIGN SPECIFICATIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+┌─ HEADER SECTION ──────────────────────────────────────────────────────────┐
+│                                                                            │
+│  ┏━━━━━━━┓  ← Logo Placeholder (80x80px)                                 │
+│  ┃ LOGO  ┃     • Purple background (#7C6DB0)                             │
+│  ┗━━━━━━━┛     • Rounded corners (10px border-radius)                    │
+│                 • Bordered with lighter purple (#9F91D8)                  │
+│                 • Contains text "LOGO" as placeholder                     │
+│                                                                            │
+│  "Suffix Tree apps" ← Title Text                                          │
+│     • Positioned 15px to the right of logo                                │
+│     • Font: Verdana, 28pt, Bold                                           │
+│     • Color: Light gray (#EDEDED)                                         │
+│     • Left-aligned to logo                                                │
+│                                                                            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─ MAIN CONTENT (4 ROUND BUTTONS) ──────────────────────────────────────────┐
+│                                                                            │
+│  Grid Layout: 2 rows × 2 columns                                          │
+│  Spacing: 40px horizontal, 40px vertical                                  │
+│  Buttons centered in the window                                           │
+│                                                                            │
+│  Each button:                                                              │
+│     • Size: 150x150 pixels (perfect circle)                               │
+│     • Border-radius: 75px (makes it circular)                             │
+│     • Background: Purple (#7C6DB0)                                        │
+│     • Border: 3px solid lighter purple (#9F91D8)                          │
+│     • Contains emoji icon at top                                          │
+│     • Multi-line text below icon                                          │
+│     • Font: Arial, 12pt, DemiBold                                         │
+│     • Text color: White (#FFFFFF)                                         │
+│                                                                            │
+│  Button Layout:                                                            │
+│     Row 0, Col 0: 🔍 Search Pattern                                       │
+│     Row 0, Col 1: 🔄 Longest Repeated                                     │
+│     Row 1, Col 0: 💡 Predict Completion                                   │
+│     Row 1, Col 1: 👥 Employee Rating                                      │
+│                                                                            │
+│  Hover Effects:                                                            │
+│     • Background changes to lighter purple (#8E7FD1)                      │
+│     • Border changes to even lighter purple (#B5A7E8)                     │
+│     • Cursor changes to pointing hand                                     │
+│                                                                            │
+│  Press Effect:                                                             │
+│     • Background changes to darker purple (#6B5AA6)                       │
+│                                                                            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─ FOOTER SECTION (EXIT BUTTON) ────────────────────────────────────────────┐
+│                                                                            │
+│  Exit Button: Bottom Right Corner                                         │
+│     • Size: 120x45 pixels                                                 │
+│     • Background: Red (#B91C1C)                                           │
+│     • Border-radius: 8px (rounded corners)                                │
+│     • Text: "Exit"                                                        │
+│     • Font: Arial, 14pt, Bold                                             │
+│     • Text color: White (#FFFFFF)                                         │
+│     • No border                                                            │
+│                                                                            │
+│  Hover Effect:                                                             │
+│     • Background changes to brighter red (#DC2626)                        │
+│                                                                            │
+│  Press Effect:                                                             │
+│     • Background changes to darker red (#991B1B)                          │
+│                                                                            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                              COLOR PALETTE
+═══════════════════════════════════════════════════════════════════════════════
+
+Background Colors:
+  • Main Window:     #1A1A1A (Dark charcoal)
+  • Primary Purple:  #7C6DB0 (Medium purple)
+  • Hover Purple:    #8E7FD1 (Light purple)
+  • Pressed Purple:  #6B5AA6 (Dark purple)
+  • Border Purple:   #9F91D8 (Light border)
+  • Hover Border:    #B5A7E8 (Lighter border)
+  
+Exit Button Colors:
+  • Default Red:     #B91C1C (Dark red)
+  • Hover Red:       #DC2626 (Bright red)
+  • Pressed Red:     #991B1B (Darker red)
+
+Text Colors:
+  • Primary Text:    #FFFFFF (White)
+  • Label Text:      #EDEDED (Light gray)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                         WINDOW SPECIFICATIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+Window Dimensions:
+  • Width:  800 pixels
+  • Height: 600 pixels
+  • Title:  "Suffix Tree Applications"
+
+Layout Margins:
+  • Top:    30px
+  • Right:  40px
+  • Bottom: 30px
+  • Left:   40px
+
+Layout Spacing:
+  • Main vertical spacing:    20px
+  • Header to buttons:        30px (additional)
+  • Button horizontal gap:    40px
+  • Button vertical gap:      40px
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                          FUNCTIONALITY MAPPING
+═══════════════════════════════════════════════════════════════════════════════
+
+Button → Action:
+  🔍 Search Pattern     → Opens SearchWindow
+  🔄 Longest Repeated   → Opens PatternWindow
+  💡 Predict Completion → Opens PredictionWindow
+  👥 Employee Rating    → Opens EmployeeRatingWindow
+  Exit                  → Closes application (QApplication::quit())
+
+Note: The mutation detection feature has been removed from the main window
+      to accommodate the 4-button layout requirement.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                            KEY IMPROVEMENTS
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Logo placeholder added at top left (ready for custom image)
+✓ Title repositioned beside logo (not centered)
+✓ Buttons redesigned as circular with icons
+✓ Buttons arranged in clean 2×2 grid
+✓ Exit button repositioned to bottom right corner
+✓ Increased window size for better layout (800×600)
+✓ Modern, professional design with consistent styling
+✓ Improved visual hierarchy
+✓ Better use of whitespace
+✓ Clear separation of header, content, and footer areas
